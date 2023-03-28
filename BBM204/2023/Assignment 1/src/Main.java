@@ -5,7 +5,7 @@ import org.knowm.xchart.*;
 import org.knowm.xchart.style.Styler;
 
 class Main {
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         // X axis data
         int[] inputAxis = {512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 251282};
