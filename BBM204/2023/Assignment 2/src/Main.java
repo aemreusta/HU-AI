@@ -11,9 +11,10 @@ public class Main {
      * A {@link Planner} instance must be instantiated here
      */
     public static void main(String[] args) throws IOException {
-        String file = args[0];              //get file name as an argument
+        String file = "/io/input/input6.json";
+        // String file = args[0]; //get file name as an argument
         Task[] tasks = parseJSON(file);
-        Arrays.sort(tasks);           //sort task array for binary search
+        Arrays.sort(tasks); // sort task array for binary search
         Planner planner = new Planner(tasks);
         planner.planDynamic();
         System.out.println();
@@ -22,7 +23,8 @@ public class Main {
 
     /**
      * @param filename json filename to read
-     * @return Returns a list of {@link Task}s obtained by reading the given json file
+     * @return Returns a list of {@link Task}s obtained by reading the given json
+     *         file
      * @throws FileNotFoundException If the given file does not exist
      */
     public static Task[] parseJSON(String filename) throws FileNotFoundException {
