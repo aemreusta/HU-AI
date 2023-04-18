@@ -8,7 +8,7 @@ public class Task implements Comparable {
     public boolean urgent;
 
     /*
-        Getter methods
+     * Getter methods
      */
     public String getName() {
         return this.name;
@@ -37,7 +37,8 @@ public class Task implements Comparable {
      */
     public String getFinishTime() {
         // YOUR CODE HERE
-        return "";
+        LocalTime finishTime = LocalTime.parse(start).plusHours(duration);
+        return finishTime.toString();
     }
 
     /**
@@ -47,21 +48,32 @@ public class Task implements Comparable {
      */
     public double getWeight() {
         // YOUR CODE HERE
-        return -1.0;
-
+        return (importance * (urgent ? 2000 : 1)) / duration;
     }
 
     /**
-     * This method is needed to use {@link java.util.Arrays#sort(Object[])} ()}, which sorts the given array easily
+     * This method is needed to use {@link java.util.Arrays#sort(Object[])} ()},
+     * which sorts the given array easily
      *
      * @param o Object to compare to
      * @return If self > object, return > 0 (e.g. 1)
-     * If self == object, return 0
-     * If self < object, return < 0 (e.g. -1)
+     *         If self == object, return 0
+     *         If self < object, return < 0 (e.g. -1)
      */
     @Override
     public int compareTo(Object o) {
         // YOUR CODE HERE
-        return -1;
+        // compare them using getFinishTime() method
+        if (this.getFinishTime().compareTo(((Task) o).getFinishTime()) > 0) {
+            return 1;
+        }
+
+        else if (this.getFinishTime().compareTo(((Task) o).getFinishTime()) == 0) {
+            return 0;
+        }
+
+        else {
+            return -1;
+        }
     }
 }
