@@ -1,8 +1,10 @@
 import java.io.*;
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 public class Main {
     /**
@@ -11,14 +13,27 @@ public class Main {
      * A {@link Planner} instance must be instantiated here
      */
     public static void main(String[] args) throws IOException {
-        String file = "/io/input/input6.json";
-        // String file = args[0]; //get file name as an argument
+        String file = "/Users/emre/GitHub/HU-AI/BBM204/2023/Assignment 2/io/input/input6.json";
+        // String file = args[0]; // get file name as an argument
         Task[] tasks = parseJSON(file);
         Arrays.sort(tasks); // sort task array for binary search
+
+        for (Task t : tasks) {
+            System.out.println(t);
+        }
+
         Planner planner = new Planner(tasks);
-        planner.planDynamic();
-        System.out.println();
-        planner.planGreedy();
+        // System.out.println("Dynamic Schedule\n---------------");
+        // ArrayList<Task> tmp = planner.planDynamic();
+        // for (Task t : tmp) {
+        // System.out.println(t);
+        // }
+
+        System.out.println("Greedy Schedule\n---------------");
+        ArrayList<Task> tmp2 = planner.planGreedy();
+        for (Task t : tmp2) {
+            System.out.println(t);
+        }
     }
 
     /**

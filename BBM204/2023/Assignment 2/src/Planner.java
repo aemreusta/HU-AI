@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class Planner {
 
@@ -16,8 +18,7 @@ public class Planner {
 
         this.taskArray = taskArray;
         this.compatibility = new Integer[taskArray.length];
-        maxWeight = new Double[taskArray.length];
-
+        this.maxWeight = new Double[taskArray.length];
         this.planDynamic = new ArrayList<>();
         this.planGreedy = new ArrayList<>();
     }
@@ -25,29 +26,54 @@ public class Planner {
     /**
      * @param index of the {@link Task}
      * @return Returns the index of the last compatible {@link Task},
-     * returns -1 if there are no compatible {@link Task}s.
+     *         returns -1 if there are no compatible {@link Task}s.
      */
     public int binarySearch(int index) {
-        // YOUR CODE HERE
+        int start = 0, end = index - 1, mid;
+        while (start <= end) {
+            mid = start + (end - start) / 2;
+            if (taskArray[mid].getFinishTime().compareTo(taskArray[index].start) <= 0) {
+                if (taskArray[mid + 1].getFinishTime().compareTo(taskArray[index].start) <= 0)
+                    start = mid + 1;
+                else
+                    return mid;
+            }
+
+            else
+                end = mid - 1;
+        }
         return -1;
     }
-
 
     /**
      * {@link #compatibility} must be filled after calling this method
      */
     public void calculateCompatibility() {
-        // YOUR CODE HERE
-    }
 
+        for (int i = 0; i < taskArray.length; i++) {
+            compatibility[i] = binarySearch(i);
+        }
+
+        // print compatibility array
+        for (int i = 0; i < taskArray.length; i++) {
+            System.out.println(taskArray[i].name + " -> compatibility[" + i + "] = " +
+                    compatibility[i]);
+        }
+    }
 
     /**
      * Uses {@link #taskArray} property
-     * This function is for generating a plan using the dynamic programming approach.
+     * This function is for generating a plan using the dynamic programming
+     * approach.
+     * 
      * @return Returns a list of planned tasks.
      */
     public ArrayList<Task> planDynamic() {
-        // YOUR CODE HERE
+        Arrays.sort(taskArray);
+        calculateCompatibility();
+        for (int i = 0; i < taskArray.length; i++) {
+            solveDynamic(i);
+        }
         return planDynamic;
     }
 
@@ -55,16 +81,34 @@ public class Planner {
      * {@link #planDynamic} must be filled after calling this method
      */
     public void solveDynamic(int i) {
-        // YOUR CODE HERE
+        if (i == 0 || compatibility[i] == -1) {
+            planDynamic.add(taskArray[i]);
+        } else {
+            Double weightWithI = taskArray[i].importance + calculateMaxWeight(i - 1);
+            Double weightWithoutI = calculateMaxWeight(i - 1);
+            if (weightWithI > weightWithoutI) {
+                planDynamic.add(taskArray[i]);
+                solveDynamic(compatibility[i]);
+            } else {
+                solveDynamic(i - 1);
+            }
+        }
     }
 
     /**
      * {@link #maxWeight} must be filled after calling this method
      */
-    /* This function calculates maximum weights and prints out whether it has been called before or not  */
+    /*
+     * This function calculates maximum weights and prints out whether it has been
+     * called before or not
+     */
     public Double calculateMaxWeight(int i) {
-        // YOUR CODE HERE
-        return -1.0;
+
+        // System.out.println("Called calculateMaxWeight(" + i + ")");
+        Double maxWeightWithI = taskArray[i].importance + calculateMaxWeight(compatibility[i]);
+        Double maxWeightWithoutI = calculateMaxWeight(i - 1);
+        maxWeight[i] = Math.max(maxWeightWithI, maxWeightWithoutI);
+        return maxWeight[i];
     }
 
     /**
@@ -76,9 +120,17 @@ public class Planner {
 
     /*
      * This function is for generating a plan using the greedy approach.
-     * */
+     */
     public ArrayList<Task> planGreedy() {
-        // YOUR CODE HERE
+        Arrays.sort(taskArray);
+
+        planGreedy.add(taskArray[0]);
+
+        for (int i = 1; i < taskArray.length; i++) {
+            if (taskArray[i].start.compareTo(planGreedy.get(planGreedy.size() - 1).getFinishTime()) >= 0) {
+                planGreedy.add(taskArray[i]);
+            }
+        }
         return planGreedy;
     }
 }

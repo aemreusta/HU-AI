@@ -76,4 +76,15 @@ public class Task implements Comparable {
             return -1;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", start='" + start + '\'' +
+                ", duration=" + duration +
+                ", importance=" + importance +
+                ", urgent=" + urgent +
+                '}';
+    }
 }
