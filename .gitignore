@@ -21,6 +21,15 @@
 *.xps
 *.parquet
 *.zip
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.sqlite3
+*.db
+*.db3
+*.sqlite
+*.sqlitedb
 
 # Log file
 *.log
