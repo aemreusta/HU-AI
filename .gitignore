@@ -30,6 +30,8 @@
 *.db3
 *.sqlite
 *.sqlitedb
+*.pkl
+*.pickle
 
 # Log file
 *.log
