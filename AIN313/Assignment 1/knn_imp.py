@@ -9,155 +9,181 @@ Original file is located at
 Mert Çetin 2220356148
 """
 
-#importing libraries
+# importing libraries
 import pandas as pd
 import numpy as np
 import math
 
+
 # Defining a function to normalize each data
 def normalize_data(each_data):
-  min = -3
-  max = 3
-  normalized_data = (each_data - min) / (max - min)
+    min = -3
+    max = 3
+    normalized_data = (each_data - min) / (max - min)
 
-  return normalized_data
+    return normalized_data
+
 
 # reading the csv file
-df = pd.read_csv("16P.csv", encoding="cp1252", error_bad_lines = False)
+df = pd.read_csv("16P.csv", encoding="cp1252", error_bad_lines=False)
 
 df = df.head(10000)
 
 # dropping the "Response Id" column since we do not need it.
-df.drop('Response Id', inplace=True, axis=1)
+df.drop("Response Id", inplace=True, axis=1)
 
 # Saving the y_values for later
-y_values = df['Personality']
+y_values = df["Personality"]
 
 # encoding the personalities column
-y_values.replace(to_replace={"ESTJ": 0, "ENTJ": 1, "ESFJ": 2, "ENFJ": 3, "ISTJ": 4, "ISFJ": 5, "INTJ": 6, "INFJ": 7, "ESTP": 8, "ESFP": 9, "ENTP": 10, "ENFP": 11, "ISTP": 12, "ISFP": 13, "INTP": 14, "INFP": 15}, inplace=True)
+y_values.replace(
+    to_replace={
+        "ESTJ": 0,
+        "ENTJ": 1,
+        "ESFJ": 2,
+        "ENFJ": 3,
+        "ISTJ": 4,
+        "ISFJ": 5,
+        "INTJ": 6,
+        "INFJ": 7,
+        "ESTP": 8,
+        "ESFP": 9,
+        "ENTP": 10,
+        "ENFP": 11,
+        "ISTP": 12,
+        "ISFP": 13,
+        "INTP": 14,
+        "INFP": 15,
+    },
+    inplace=True,
+)
 
 # Dropping the y values
-df.drop('Personality', inplace=True, axis=1)
+df.drop("Personality", inplace=True, axis=1)
 
 # Data scaling
 df_normalized = df.copy()  # dataframe normalized
 
 # normalizing each column in the dataframe
 for col in df.columns:
-  df_normalized[col] = normalize_data(df[col])
+    df_normalized[col] = normalize_data(df[col])
 
 # splitting data into 5 to apply cross validation
 x_train_folds = np.array_split(df_normalized, 5)
 
 y_train_folds = np.array_split(y_values, 5)
 
+
 def euc_distance(val_row, train_set):
+    x2 = np.sum(val_row**2)
+    y2 = np.sum(train_set**2, axis=1)
 
-  x2 = np.sum(val_row ** 2)
-  y2 = np.sum(train_set ** 2, axis = 1)
+    # matrix multiplication to calculate distances
+    xy = np.matmul(val_row, train_set.T)
 
-  # matrix multiplication to calculate distances
-  xy = np.matmul(val_row, train_set.T)
+    distances = np.sqrt(x2 - 2 * xy + y2)
 
-  distances = np.sqrt(x2 - 2 * xy + y2)
+    return distances
 
-  return distances
 
 def k_nearest_neighbors(k, distances, y_train):
-  the_dict = {}
-  for dist, y_val in zip(distances, y_values):
-    the_dict[dist] = y_val
+    the_dict = {}
+    for dist, y_val in zip(distances, y_values):
+        the_dict[dist] = y_val
 
-  sorted_distances = np.sort(distances)
+    sorted_distances = np.sort(distances)
 
-  nearest_k = sorted_distances[:k]
+    nearest_k = sorted_distances[:k]
 
-  predictions = []
+    predictions = []
 
-  for i in nearest_k:
-    predictions.append(the_dict[i])
+    for i in nearest_k:
+        predictions.append(the_dict[i])
 
-  counter = 0
+    counter = 0
 
-  num = predictions[0]
+    num = predictions[0]
 
-  # finding most frequent element
-  for i in predictions:
-    curr_freq = predictions.count(i)
-    if curr_freq > counter:
-      counter = curr_freq
-      num = i
-  return num
+    # finding most frequent element
+    for i in predictions:
+        curr_freq = predictions.count(i)
+        if curr_freq > counter:
+            counter = curr_freq
+            num = i
+    return num
+
 
 def kNN(k, val_row, train_set, y_train):
-  distances = euc_distance(val_row, train_set) # 80 değer döndü
-  prediction = k_nearest_neighbors(k, distances, y_train) # tahmin burda
+    distances = euc_distance(val_row, train_set)  # 80 değer döndü
+    prediction = k_nearest_neighbors(k, distances, y_train)  # tahmin burda
 
-  return prediction
+    return prediction
+
 
 def calculate_accuracy(preds, y_value):
-  conf_mat = pd.DataFrame(index=range(0,16), columns=range(0,16))
-  conf_mat = conf_mat.fillna(0)
+    conf_mat = pd.DataFrame(index=range(0, 16), columns=range(0, 16))
+    conf_mat = conf_mat.fillna(0)
 
-  # Count the number of times each combination of true and predicted labels appears
-  for i in range(len(y_value)):
-      conf_mat.loc[y_value[i], preds[i]] += 1
+    # Count the number of times each combination of true and predicted labels appears
+    for i in range(len(y_value)):
+        conf_mat.loc[y_value[i], preds[i]] += 1
 
-  precisions = []
-  recalls = []
-  for i in range(0, 16):
-    TP = conf_mat.loc[i,i] #true positive
-    FP = conf_mat.sum(axis=0)[i] - TP #false positive
-    FN = conf_mat.sum(axis=1)[i] - TP
-    precision = TP / (TP + FP)
-    recall = TP / (TP + FN)
+    precisions = []
+    recalls = []
+    for i in range(0, 16):
+        TP = conf_mat.loc[i, i]  # true positive
+        FP = conf_mat.sum(axis=0)[i] - TP  # false positive
+        FN = conf_mat.sum(axis=1)[i] - TP
+        precision = TP / (TP + FP)
+        recall = TP / (TP + FN)
 
-    if type(precision) != np.float64:
-      precision = 0
+        if type(precision) != np.float64:
+            precision = 0
 
-    if type(recall) != np.float64:
-      recall = 0
+        if type(recall) != np.float64:
+            recall = 0
 
-    precisions.append(precision)
-    recalls.append(recall)
+        precisions.append(precision)
+        recalls.append(recall)
 
-  precision = sum(precisions) / 16
-  recall = sum(recalls) / 16
+    precision = sum(precisions) / 16
+    recall = sum(recalls) / 16
 
-  counter = 0
-  for idx, pred in enumerate(preds):
-    if pred == y_value[idx]:
-      counter += 1
+    counter = 0
+    for idx, pred in enumerate(preds):
+        if pred == y_value[idx]:
+            counter += 1
 
-  accuracy = counter / len(preds)
+    accuracy = counter / len(preds)
 
-  return accuracy, precision, recall
+    return accuracy, precision, recall
+
 
 k_values = [1, 3, 5, 7, 9]
 
 for k in k_values:
-  print("For k =", k)
+    print("For k =", k)
 
-  x_train = x_train_folds.copy()
-
-  for i in range(5):
     x_train = x_train_folds.copy()
-    val_set = x_train.pop(i).to_numpy()
-    train_set = np.concatenate(x_train)
 
-    y_train = y_train_folds.copy()
-    y_val_set = y_train.pop(i).to_numpy()
-    y_train_set = np.concatenate(y_train)
+    for i in range(5):
+        x_train = x_train_folds.copy()
+        val_set = x_train.pop(i).to_numpy()
+        train_set = np.concatenate(x_train)
 
-    preds = []
+        y_train = y_train_folds.copy()
+        y_val_set = y_train.pop(i).to_numpy()
+        y_train_set = np.concatenate(y_train)
 
-    for each_row in val_set:
-      preds.append(kNN(k, each_row, train_set, y_train_set))
+        preds = []
 
-    accuracy, precision, recall = calculate_accuracy(preds, y_val_set)
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
+        for each_row in val_set:
+            preds.append(kNN(k, each_row, train_set, y_train_set))
+
+        accuracy, precision, recall = calculate_accuracy(preds, y_val_set)
+        print("Accuracy:", accuracy)
+        print("Precision:", precision)
+        print("Recall:", recall)
 
 """# Without Normalization
 
@@ -170,28 +196,28 @@ y_train_folds = np.array_split(y_values, 5)
 k_values = [1, 3, 5, 7, 9]
 
 for k in k_values:
-  print("For k =", k)
+    print("For k =", k)
 
-  x_train = x_train_folds.copy()
-
-  for i in range(5):
     x_train = x_train_folds.copy()
-    val_set = x_train.pop(i).to_numpy()
-    train_set = np.concatenate(x_train)
 
-    y_train = y_train_folds.copy()
-    y_val_set = y_train.pop(i).to_numpy()
-    y_train_set = np.concatenate(y_train)
+    for i in range(5):
+        x_train = x_train_folds.copy()
+        val_set = x_train.pop(i).to_numpy()
+        train_set = np.concatenate(x_train)
 
-    preds = []
+        y_train = y_train_folds.copy()
+        y_val_set = y_train.pop(i).to_numpy()
+        y_train_set = np.concatenate(y_train)
 
-    for each_row in val_set:
-      preds.append(kNN(k, each_row, train_set, y_train_set))
+        preds = []
 
-    accuracy, precision, recall = calculate_accuracy(preds, y_val_set)
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
+        for each_row in val_set:
+            preds.append(kNN(k, each_row, train_set, y_train_set))
+
+        accuracy, precision, recall = calculate_accuracy(preds, y_val_set)
+        print("Accuracy:", accuracy)
+        print("Precision:", precision)
+        print("Recall:", recall)
 
 """## ***Error Analysis for Classification***
 
