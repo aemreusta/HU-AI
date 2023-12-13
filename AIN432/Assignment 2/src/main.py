@@ -3,35 +3,39 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Define the working directory and image location
 workdir = "/Users/emre/GitHub/HU-AI/AIN432/Assignment 2/"
 IMAGES_LOCATION = os.path.join(workdir, "images/full-size")
 
 
 def read_directory(directory_name):
+    # Read and return the list of files in the specified directory, sorted
     return sorted(os.listdir(directory_name))
 
 
 def create_directory(workdir, directory_name):
+    # Create a directory if it doesn't exist
     if not os.path.exists(os.path.join(workdir, directory_name)):
         os.makedirs(os.path.join(workdir, directory_name))
 
 
 def save_graphs(workdir, directory_name, graphname, plt):
+    # Save graphs to a specified directory
     create_directory(workdir, directory_name)
     plt.savefig(os.path.join(workdir, directory_name, graphname))
 
 
 def read_images(image_paths):
+    # Read and return a dictionary of images from the specified paths
     images = {}
     for image_path in image_paths:
-        # check if image exist
+        # Check if the image exists
         if not os.path.isfile(os.path.join(IMAGES_LOCATION, image_path)):
             print("Image not found: ", image_path)
             continue
 
-        # read image
+        # Read and convert the image to RGB
         img = cv2.imread(os.path.join(IMAGES_LOCATION, image_path))
-        # cobvert to RGB
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         images[image_path] = img
 
@@ -39,6 +43,7 @@ def read_images(image_paths):
 
 
 def show_images(images, title="Images"):
+    # Display a grid of images
     images_len = len(images)
     cols = 3
     rows = images_len // cols + (images_len % cols > 0)
@@ -50,12 +55,12 @@ def show_images(images, title="Images"):
     axes = ax.ravel() if images_len > cols else [ax]
 
     if type(images) is dict:
+        # Display images with titles
         for i, (image_name, image) in enumerate(images.items()):
             axes[i].imshow(image, aspect="auto")
             axes[i].set_title(image_name, fontsize=8)
-            # axes[i].axis("off")
-
     else:
+        # Display images without titles
         for i, image in enumerate(images):
             axes[i].imshow(image, aspect="auto")
             axes[i].axis("off")
@@ -64,11 +69,13 @@ def show_images(images, title="Images"):
     for j in range(i + 1, rows * cols):
         axes[j].axis("off")
 
+    # Save and show the graph
     save_graphs(workdir, "graphs", title + ".png", plt)
     plt.show()
 
 
 def show_laplacian_pyramids(images_dict, title="Images"):
+    # Display Laplacian pyramids
     num_images = len(images_dict)
     pyramid_levels = len(
         next(iter(images_dict.values()))
@@ -92,17 +99,18 @@ def show_laplacian_pyramids(images_dict, title="Images"):
                 image, cmap="gray"
             )  # Use 'cmap' accordingly if images are not grayscale
             ax[index].set_title(f"{image_name} Level {j}", fontsize=6)
-            # ax[index].axis("off")
 
     # Hide unused axes
     for j in range(num_images * pyramid_levels, len(ax)):
         ax[j].axis("off")
 
+    # Save and show the graph
     save_graphs(workdir, "graphs", title + ".png", plt)
     plt.show()
 
 
 def resize_images(images, size):
+    # Resize images to the specified size
     resized_images = {}
     for image_name, image in images.items():
         resized_images[image_name] = cv2.resize(image, size)
@@ -111,6 +119,7 @@ def resize_images(images, size):
 
 
 def build_laplacian_pyramid(image, max_levels):
+    # Build Laplacian pyramid for the given image and maximum levels
     gaussian_pyramid = [image]
     for _ in range(max_levels):
         image = cv2.pyrDown(image)
@@ -126,6 +135,7 @@ def build_laplacian_pyramid(image, max_levels):
 
 
 def build_gaussian_pyramid(image, max_levels):
+    # Build Gaussian pyramid for the given image and maximum levels
     pyramid = [image]
     for _ in range(max_levels - 1):
         image = cv2.pyrDown(image)
@@ -134,6 +144,7 @@ def build_gaussian_pyramid(image, max_levels):
 
 
 def select_center_of_image(image, resize_factor=0.5):
+    # Select and return the center region of the image
     h, w = image.shape[:2]
     center_x, center_y = int(w * (1 - resize_factor) / 2), int(
         h * (1 - resize_factor) / 2
@@ -145,6 +156,7 @@ def select_center_of_image(image, resize_factor=0.5):
 
 
 def add_images(full_image, center_image):
+    # Add the center region of an image to the center of another image
     h1, w1 = full_image.shape[:2]
     h2, w2 = center_image.shape[:2]
 
@@ -157,6 +169,7 @@ def add_images(full_image, center_image):
 
 
 def blend_images(laplacian_pyramid_1, laplacian_pyramid_2):
+    # Blend two Laplacian pyramids by adding the center of one to the center of the other
     blended_pyramid = []
 
     for laplacian_1, laplacian_2 in zip(laplacian_pyramid_1, laplacian_pyramid_2):
@@ -176,6 +189,7 @@ def blend_images(laplacian_pyramid_1, laplacian_pyramid_2):
 
 
 def reconstruct_image(laplacian_pyramid):
+    # Reconstruct an image from its Laplacian pyramid
     image = laplacian_pyramid[-1]
     for laplacian in reversed(laplacian_pyramid[:-1]):
         image = cv2.pyrUp(image)
@@ -189,43 +203,40 @@ def reconstruct_image(laplacian_pyramid):
 
 
 def main():
-    # MAX_LEVELS = 5
-    # MAX_LEVELS = 7
     MAX_LEVELS = 9
-    # IMAGE_SIZE = (1024, 1024)
-    IMAGE_SIZE = (2048, 2048)
+    IMAGE_SIZE = (1024, 1024)
 
-    # read images from directory
+    # Read images from the directory
     image_paths = read_directory(IMAGES_LOCATION)
     images = read_images(image_paths)
 
-    # resize images
+    # Resize images
     resized_images = resize_images(images, IMAGE_SIZE)
 
-    # show resized images
+    # Display resized images
     show_images(resized_images, f"Resized Images ({IMAGE_SIZE})")
 
-    # build laplacian pyramids
+    # Build Laplacian pyramids
     laplacian_pyramids = {}
     for image_name, image in resized_images.items():
         laplacian_pyramids[image_name] = build_laplacian_pyramid(image, MAX_LEVELS)
 
-    # select the center of the image
+    # Select the center of the image
     center_images = {}
     for image_name, image in resized_images.items():
         center_images[image_name] = select_center_of_image(image, resize_factor=0.5)
 
-    # show center of images
+    # Display center of images
     show_images(center_images, f"Center Images (50% - {IMAGE_SIZE})")
 
-    # build laplacian pyramids for center of images
+    # Build Laplacian pyramids for the center of images
     laplacian_pyramids_center = {}
     for image_name, image in center_images.items():
         laplacian_pyramids_center[image_name] = build_laplacian_pyramid(
             image, MAX_LEVELS
         )
 
-    # add center of images to center of laplacian pyramids for reverse order
+    # Add center of images to the center of Laplacian pyramids for reverse order
     blended_pyramids = {}
     for image_name, laplacian_pyramid, laplacian_pyramid_center in zip(
         images.keys(),
@@ -236,7 +247,7 @@ def main():
             laplacian_pyramid, laplacian_pyramid_center
         )
 
-    # show added images
+    # Display added images
     added_images = {}
     for image_name, full_image, center_image in zip(
         images.keys(), resized_images.values(), reversed(center_images.values())
@@ -245,7 +256,7 @@ def main():
 
     show_images(added_images, f"Added Images ({IMAGE_SIZE})")
 
-    # show blended images
+    # Display blended images
     blended_images = {}
     for image_name, blended_pyramid in blended_pyramids.items():
         blended_images[image_name] = reconstruct_image(blended_pyramid)
