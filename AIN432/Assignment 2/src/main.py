@@ -1,6 +1,5 @@
 import os
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
 
 # Define the working directory and image location
