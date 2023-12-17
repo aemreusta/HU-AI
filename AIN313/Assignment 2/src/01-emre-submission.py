@@ -596,7 +596,7 @@ class NaiveBayesClassifier:
             predictions = []
             actual_sizes = []
             for future in concurrent.futures.as_completed(futures):
-                index = futures[future]
+                futures[future]
                 pred_batch, actual_size = future.result()
                 predictions.extend(pred_batch)
                 actual_sizes.append(actual_size)

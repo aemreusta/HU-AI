@@ -12,7 +12,6 @@ Mert Çetin 2220356148
 # importing libraries
 import pandas as pd
 import numpy as np
-import math
 
 
 # Defining a function to normalize each data
