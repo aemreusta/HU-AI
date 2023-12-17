@@ -53,7 +53,7 @@ def show_images(images, title="Images"):
 
     axes = ax.ravel() if images_len > cols else [ax]
 
-    if type(images) is dict:
+    if type(images) is dict:  # noqa: E721
         # Display images with titles
         for i, (image_name, image) in enumerate(images.items()):
             axes[i].imshow(image, aspect="auto")
@@ -145,8 +145,9 @@ def build_gaussian_pyramid(image, max_levels):
 def select_center_of_image(image, resize_factor=0.5):
     # Select and return the center region of the image
     h, w = image.shape[:2]
-    center_x, center_y = int(w * (1 - resize_factor) / 2), int(
-        h * (1 - resize_factor) / 2
+    center_x, center_y = (
+        int(w * (1 - resize_factor) / 2),
+        int(h * (1 - resize_factor) / 2),
     )
     return image[
         center_y : center_y + int(h * resize_factor),
