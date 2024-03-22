@@ -33,6 +33,14 @@
 *.pkl
 *.pickle
 
+### Dataset Path ###
+datasets
+datasets/
+datasets/*
+dataset
+dataset/*
+dataset/
+
 # Log file
 *.log
 
