@@ -4,7 +4,7 @@ import java.io.*;
 public class Quiz3 {
     public static void main(String[] args) throws IOException {
         // Scanner scanner = new Scanner(new File(args[0])); // Adjust the path if running locally
-        Scanner scanner = new Scanner(new File("/Users/emre/GitHub/HU-AI/BBM204/2024/Quiz 3/src/sample_io/sample_input_1.txt"));
+        Scanner scanner = new Scanner(new File("/Users/emre/GitHub/HU-AI/BBM204/2024/Quiz 3/src/sample_io/sample_input_0.txt"));
         int numberOfTestCases = scanner.nextInt(); // First number is the number of test cases
 
         for (int t = 0; t < numberOfTestCases; t++) {
