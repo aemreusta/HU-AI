@@ -2,90 +2,60 @@ import java.util.*;
 import java.io.*;
 
 public class Quiz3 {
-    static class Station {
-        double x, y;
-
-        public Station(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public double distanceTo(Station other) {
-            return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
-        }
-    }
-
     public static void main(String[] args) throws IOException {
-        // Scanner sc = new Scanner(new File(args[0]));
-        Scanner sc = new Scanner(new File ("/Users/emre/GitHub/HU-AI/BBM204/2024/Quiz 3/src/sample_io/sample_input_0.txt"));
-        int numberOfTestCases = sc.nextInt();
 
-        while (numberOfTestCases-- > 0) {
-            int S = sc.nextInt();  // stations with drones
-            int P = sc.nextInt();  // total stations
+        // String filename = args[0];
+        String filename = "/Users/emre/GitHub/HU-AI/BBM204/2024/Quiz 3/src/sample_io/sample_input_1.txt";
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            int testCases = scanner.nextInt();
+            for (int t = 0; t < testCases; t++) {
+                int S = scanner.nextInt(); // Stations with drones
+                int P = scanner.nextInt(); // Total stations
 
-            Station[] stations = new Station[P];
-            for (int i = 0; i < P; i++) {
-                double x = sc.nextDouble();
-                double y = sc.nextDouble();
-                stations[i] = new Station(x, y);
-            }
+                int[][] stations = new int[P][2];
+                for (int i = 0; i < P; i++) {
+                    stations[i][0] = scanner.nextInt(); // x coordinate
+                    stations[i][1] = scanner.nextInt(); // y coordinate
+                }
 
-            double minimumT = findMinimumT(stations, S);
-            System.out.printf("%.2f\n", minimumT);
-        }
-        sc.close();
-    }
+                // List to store the minimum distances for each station without a drone
+                List<Double> minDistances = new ArrayList<>();
 
-    private static double findMinimumT(Station[] stations, int droneCount) {
-        List<Double> distances = new ArrayList<>();
-        // Calculate distances only between non-drone equipped stations
-        for (int i = droneCount; i < stations.length; i++) {
-            for (int j = i + 1; j < stations.length; j++) {
-                distances.add(stations[i].distanceTo(stations[j]));
-            }
-        }
-        Collections.sort(distances);
+                // Determine which stations are equipped with drones
+                boolean[] hasDrone = new boolean[P];
+                Arrays.fill(hasDrone, false);
+                for (int i = 0; i < S; i++) {
+                    hasDrone[i] = true;
+                }
 
-        // Implement binary search on the sorted distances
-        double left = 0, right = distances.isEmpty() ? 0 : distances.get(distances.size() - 1);
-        while (right - left > 1e-6) {
-            double mid = (left + right) / 2;
-            if (isConnected(stations, mid, droneCount)) {
-                right = mid;
-            } else {
-                left = mid;
-            }
-        }
-        return right;
-    }
-
-    private static boolean isConnected(Station[] stations, double T, int droneCount) {
-        int n = stations.length;
-        boolean[] visited = new boolean[n];
-        Stack<Integer> stack = new Stack<>();
-
-        if (droneCount > 0) {
-            stack.push(0); // Start from any drone-equipped station
-            visited[0] = true;
-        }
-
-        while (!stack.isEmpty()) {
-            int node = stack.pop();
-            for (int neighbor = 0; neighbor < n; neighbor++) {
-                if (!visited[neighbor]) {
-                    if (node < droneCount || neighbor < droneCount || stations[node].distanceTo(stations[neighbor]) <= T) {
-                        stack.push(neighbor);
-                        visited[neighbor] = true;
+                // Calculate distances only for pairs that do not both have drones
+                for (int i = 0; i < P; i++) {
+                    double minDistance = Double.MAX_VALUE;
+                    for (int j = 0; j < P; j++) {
+                        if (i != j && !(hasDrone[i] && hasDrone[j])) {
+                            double dist = Math.sqrt(Math.pow(stations[i][0] - stations[j][0], 2) 
+                                                  + Math.pow(stations[i][1] - stations[j][1], 2));
+                            if (dist < minDistance) {
+                                minDistance = dist;
+                            }
+                        }
+                    }
+                    // Only add to list if station does not have a drone
+                    if (!hasDrone[i]) {
+                        minDistances.add(minDistance);
                     }
                 }
-            }
-        }
 
-        // Check connectivity
-        for (boolean v : visited) {
-            if (!v) return false;
+                // Sort the list of minimum distances
+                Collections.sort(minDistances);
+
+                // The result is the largest of the remaining distances
+                double result = minDistances.isEmpty() ? 0 : minDistances.get(minDistances.size() - 1);
+
+                System.out.printf(Locale.US, "%.2f\n", result);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filename);
         }
-        return true;
     }
 }
