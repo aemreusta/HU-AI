@@ -2,90 +2,90 @@ import java.util.*;
 import java.io.*;
 
 public class Quiz3 {
+    static class Station {
+        double x, y;
+
+        public Station(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public double distanceTo(Station other) {
+            return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        // Scanner scanner = new Scanner(new File(args[0])); // Adjust the path if running locally
-        Scanner scanner = new Scanner(new File("/Users/emre/GitHub/HU-AI/BBM204/2024/Quiz 3/src/sample_io/sample_input_0.txt"));
-        int numberOfTestCases = scanner.nextInt(); // First number is the number of test cases
+        // Scanner sc = new Scanner(new File(args[0]));
+        Scanner sc = new Scanner(new File ("/Users/emre/GitHub/HU-AI/BBM204/2024/Quiz 3/src/sample_io/sample_input_0.txt"));
+        int numberOfTestCases = sc.nextInt();
 
-        for (int t = 0; t < numberOfTestCases; t++) {
-            int S = scanner.nextInt(); // Number of stations with drones
-            int P = scanner.nextInt(); // Total number of stations
-            int[][] stations = new int[P][2];
+        while (numberOfTestCases-- > 0) {
+            int S = sc.nextInt();  // stations with drones
+            int P = sc.nextInt();  // total stations
 
+            Station[] stations = new Station[P];
             for (int i = 0; i < P; i++) {
-                stations[i][0] = scanner.nextInt(); // X coordinate
-                stations[i][1] = scanner.nextInt(); // Y coordinate
+                double x = sc.nextDouble();
+                double y = sc.nextDouble();
+                stations[i] = new Station(x, y);
             }
 
-            double result = calculateMinimumT(stations, S, P);
-            System.out.printf("%.2f\n", result);
+            double minimumT = findMinimumT(stations, S);
+            System.out.printf("%.2f\n", minimumT);
         }
-        scanner.close();
+        sc.close();
     }
 
-    private static double calculateMinimumT(int[][] stations, int S, int P) {
-        // Priority queue to manage the edges for Kruskal's algorithm
-        PriorityQueue<Edge> edgeQueue = new PriorityQueue<>(Comparator.comparingDouble(e -> e.weight));
-        // Parent array for union-find
-        int[] parent = new int[P];
-        for (int i = 0; i < P; i++) {
-            parent[i] = i;
+    private static double findMinimumT(Station[] stations, int droneCount) {
+        List<Double> distances = new ArrayList<>();
+        // Calculate distances only between non-drone equipped stations
+        for (int i = droneCount; i < stations.length; i++) {
+            for (int j = i + 1; j < stations.length; j++) {
+                distances.add(stations[i].distanceTo(stations[j]));
+            }
+        }
+        Collections.sort(distances);
+
+        // Implement binary search on the sorted distances
+        double left = 0, right = distances.isEmpty() ? 0 : distances.get(distances.size() - 1);
+        while (right - left > 1e-6) {
+            double mid = (left + right) / 2;
+            if (isConnected(stations, mid, droneCount)) {
+                right = mid;
+            } else {
+                left = mid;
+            }
+        }
+        return right;
+    }
+
+    private static boolean isConnected(Station[] stations, double T, int droneCount) {
+        int n = stations.length;
+        boolean[] visited = new boolean[n];
+        Stack<Integer> stack = new Stack<>();
+
+        if (droneCount > 0) {
+            stack.push(0); // Start from any drone-equipped station
+            visited[0] = true;
         }
 
-        // Add edges between all pairs of stations
-        for (int i = 0; i < P; i++) {
-            for (int j = i + 1; j < P; j++) {
-                double weight = calculateDistance(stations[i], stations[j]);
-                if (i < S && j < S) { // Both stations have drones
-                    weight = 0; // Zero distance for drone-to-drone connections
+        while (!stack.isEmpty()) {
+            int node = stack.pop();
+            for (int neighbor = 0; neighbor < n; neighbor++) {
+                if (!visited[neighbor]) {
+                    if (node < droneCount || neighbor < droneCount || stations[node].distanceTo(stations[neighbor]) <= T) {
+                        stack.push(neighbor);
+                        visited[neighbor] = true;
+                    }
                 }
-                edgeQueue.add(new Edge(i, j, weight));
             }
         }
 
-        // Kruskal's algorithm to find the MST
-        double maxEdge = 0;
-        int edgesUsed = 0;
-        while (!edgeQueue.isEmpty() && edgesUsed < P - 1) {
-            Edge edge = edgeQueue.poll();
-            if (union(edge.u, edge.v, parent)) {
-                maxEdge = Math.max(maxEdge, edge.weight);
-                edgesUsed++;
-            }
+        // Check connectivity
+        for (boolean v : visited) {
+            if (!v) return false;
         }
-
-        return maxEdge;
-    }
-
-    private static double calculateDistance(int[] a, int[] b) {
-        return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-    }
-
-    private static int find(int i, int[] parent) {
-        if (parent[i] != i) {
-            parent[i] = find(parent[i], parent);
-        }
-        return parent[i];
-    }
-
-    private static boolean union(int u, int v, int[] parent) {
-        int rootU = find(u, parent);
-        int rootV = find(v, parent);
-        if (rootU != rootV) {
-            parent[rootV] = rootU;
-            return true;
-        }
-        return false;
-    }
-
-    static class Edge {
-        int u, v;
-        double weight;
-
-        Edge(int u, int v, double weight) {
-            this.u = u;
-            this.v = v;
-            this.weight = weight;
-        }
+        return true;
     }
 }
