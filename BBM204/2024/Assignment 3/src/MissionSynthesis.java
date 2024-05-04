@@ -1,20 +1,22 @@
 import java.util.*;
 
-// Assuming the necessary classes (Molecule, Bond, MolecularStructure) are defined elsewhere
-
 public class MissionSynthesis {
 
+    // List to hold human-derived molecular structures
     private final List<MolecularStructure> humanStructures;
+    // List to hold molecular structures from other sources
     private final ArrayList<MolecularStructure> diffStructures;
 
+    // Constructor to initialize humanStructures and diffStructures
     public MissionSynthesis(List<MolecularStructure> humanStructures, ArrayList<MolecularStructure> diffStructures) {
         this.humanStructures = humanStructures;
         this.diffStructures = diffStructures;
     }
 
+    // Method to synthesize a serum by forming bonds between molecules
     public List<Bond> synthesizeSerum() {
-        List<Bond> serum = new ArrayList<>();
-        List<Bond> potentialBonds = new ArrayList<>();
+        List<Bond> serum = new ArrayList<>(); // List to store the resulting bonds forming the serum
+        List<Bond> potentialBonds = new ArrayList<>(); // Temporary list to store all possible bonds
 
         // Collect all molecules with the lowest bond strength from each structure
         for (MolecularStructure ms : humanStructures) {
@@ -33,7 +35,7 @@ public class MissionSynthesis {
         // Sort bonds by weight (bond strength)
         Collections.sort(potentialBonds, Comparator.comparingDouble(Bond::getWeight));
 
-        // Kruskal's algorithm to select bonds
+        // Implementing Kruskal's algorithm to select optimal bonds
         Map<Molecule, Molecule> parent = new HashMap<>();
         for (MolecularStructure ms : humanStructures) {
             for (Molecule m : ms.getMolecules()) {
@@ -51,13 +53,14 @@ public class MissionSynthesis {
             Molecule root2 = find(parent, bond.getTo());
             if (!root1.equals(root2)) {
                 serum.add(bond);
-                parent.put(root1, root2); // Union operation
+                parent.put(root1, root2); // Union operation to form a spanning tree
             }
         }
 
         return serum;
     }
 
+    // Method to find the root of a molecule, with path compression for efficiency
     private Molecule find(Map<Molecule, Molecule> parent, Molecule m) {
         if (parent.get(m) != m) {
             parent.put(m, find(parent, parent.get(m))); // Path compression
@@ -65,6 +68,7 @@ public class MissionSynthesis {
         return parent.get(m);
     }
 
+    // Method to print the details of the synthesized serum
     public void printSynthesis(List<Bond> serum) {
         for (Bond bond : serum) {
             // Ensuring the molecules are printed in ascending order by their ID

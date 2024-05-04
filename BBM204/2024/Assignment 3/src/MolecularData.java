@@ -5,19 +5,22 @@ public class MolecularData {
 
     private final List<Molecule> molecules;
 
+    // Constructor to initialize the MolecularData with a list of molecules
     public MolecularData(List<Molecule> molecules) {
-        this.molecules = new ArrayList<>(molecules); // make a defensive copy if necessary
+        this.molecules = new ArrayList<>(molecules); // Make a defensive copy of the list to ensure encapsulation
     }
 
-
+    // Returns the list of molecules
     public List<Molecule> getMolecules() {
         return molecules;
     }
 
+    // Adds a molecule to the list of molecules
     public void addMolecule(Molecule molecule) {
         this.molecules.add(molecule);
     }
 
+    // Identifies distinct molecular structures from the list of molecules
     public List<MolecularStructure> identifyMolecularStructures() {
         Map<String, MolecularStructure> moleculeToStructure = new HashMap<>();
         List<MolecularStructure> structures = new ArrayList<>(); // Temporary list to hold all structures
@@ -38,10 +41,10 @@ public class MolecularData {
                 .collect(Collectors.toList());
     }
 
+    // Merges two molecular structures into one
     public void mergeStructures(MolecularStructure structure1, MolecularStructure structure2, Map<String, MolecularStructure> moleculeToStructure) {
         if (structure1 == structure2) {
-            // If both are the same structure, no need to merge
-            return;
+            return; // No action needed if they are the same structure
         }
 
         // Merge molecules from structure2 into structure1
@@ -54,6 +57,7 @@ public class MolecularData {
         structure2.getMolecules().clear();
     }
 
+    // Depth-first search to identify and merge molecular structures
     private void dfs(Molecule molecule, MolecularStructure currentStructure, Map<String, MolecularStructure> moleculeToStructure) {
         if (moleculeToStructure.containsKey(molecule.getId())) {
             MolecularStructure existingStructure = moleculeToStructure.get(molecule.getId());
@@ -74,18 +78,17 @@ public class MolecularData {
         }
     }
 
-
+    // Finds a molecule by ID from the list of molecules
     private Molecule findMoleculeById(String id) {
         for (Molecule m : molecules) {
             if (m.getId().equals(id)) {
                 return m;
             }
         }
-        return null; // Consider throwing an exception or handling this case properly.
+        return null; // Return null if no matching molecule is found
     }
 
-
-
+    // Prints the identified molecular structures along with their species type
     public void printMolecularStructures(List<MolecularStructure> molecularStructures, String species) {
         System.out.println(molecularStructures.size() + " molecular structures have been discovered in " + species + ".");
         int count = 1;
@@ -95,14 +98,15 @@ public class MolecularData {
         }
     }
 
-    public void printVitalesAnomaly(List<MolecularStructure> sourceStructures, List<MolecularStructure> targetStructures) {
-        List<MolecularStructure> uniqueStructures = getVitalesAnomaly(sourceStructures, targetStructures);
+    // Prints unique molecular structures found in Vitales but not in the source species
+    public void printVitalesAnomaly(ArrayList<MolecularStructure> uniqueStructures) {
         System.out.println("Molecular structures unique to Vitales individuals:");
         for (MolecularStructure unique : uniqueStructures) {
             System.out.println(unique);
         }
     }
 
+    // Identifies molecular structures unique to Vitales by comparing with source structures
     public static ArrayList<MolecularStructure> getVitalesAnomaly(List<MolecularStructure> sourceStructures, List<MolecularStructure> targetStructures) {
         Set<String> sourceSignatures = sourceStructures.stream()
                 .map(MolecularStructure::toString)
@@ -111,6 +115,4 @@ public class MolecularData {
                 .filter(structure -> !sourceSignatures.contains(structure.toString()))
                 .collect(Collectors.toCollection(ArrayList::new));  // Collect results into an ArrayList
     }
-
-
 }
