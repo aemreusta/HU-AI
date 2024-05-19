@@ -1,0 +1,7 @@
+The fastest route takes 11 minute(s).
+Directions
+----------
+1. Walk from "Starting Point" to "Jhansi Line Station 5" for 1.98 minutes.
+2. Get on the train from "Jhansi Line Station 5" to "Jhansi Line Station 4" for 1.63 minutes.
+3. Get on the train from "Jhansi Line Station 4" to "Jhansi Line Station 3" for 0.85 minutes.
+4. Walk from "Jhansi Line Station 3" to "Final Destination" for 6.94 minutes.

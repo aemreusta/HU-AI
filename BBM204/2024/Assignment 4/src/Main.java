@@ -3,8 +3,14 @@ import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {
+        // create args array with the file paths
+        // args = new String[2];
+        // args[0] = "/Users/emre/GitHub/HU-AI/BBM204/2024/Assignment 4/inputs/part_1_sample_input.xml";
 
-        // Set the default locale to English
+        // args[1] = "/Users/emre/GitHub/HU-AI/BBM204/2024/Assignment 4/inputs/part_2_sample_input.dat";
+
+        // args[1] = "/Users/emre/GitHub/HU-AI/BBM204/2024/Assignment 4/inputs/urban_transportation_input_5.dat";
+
         Locale locale = new Locale("en_EN"); 
         Locale.setDefault(locale);
 
@@ -20,6 +26,7 @@ public class Main {
         List<RouteDirection> directions = urbanTransportationApp.getFastestRouteDirections(network);
         urbanTransportationApp.printRouteDirections(directions);
         System.out.println("### URBAN TRANSPORTATION APP END ###");
+
     }
 }
 
