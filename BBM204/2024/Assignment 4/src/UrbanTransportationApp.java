@@ -17,6 +17,10 @@ class UrbanTransportationApp implements Serializable {
         Map<Station, RouteDirection> directionMap = new HashMap<>();
         PriorityQueue<Station> queue = new PriorityQueue<>(Comparator.comparingDouble(times::get));
 
+        // Print train speed and walking speed
+        System.out.println("Train speed: " + network.averageTrainSpeed + " m/min");
+        System.out.println("Walking speed: " + network.averageWalkingSpeed + " m/min");
+
         // Initialize start point
         times.put(network.startPoint, 0.0);
         queue.add(network.startPoint);
@@ -29,6 +33,7 @@ class UrbanTransportationApp implements Serializable {
 
             // If we reached the destination, break the loop
             if (current.equals(network.destinationPoint)) {
+                System.out.println("Reached destination: " + current.description);
                 break;
             }
 
@@ -39,7 +44,7 @@ class UrbanTransportationApp implements Serializable {
                     for (int i = 0; i < line.trainLineStations.size(); i++) {
                         if (i != currentIndex) {
                             Station neighbor = line.trainLineStations.get(i);
-                            double trainTime = Math.abs(currentIndex - i) * 60.0 / network.averageTrainSpeed;
+                            double trainTime = calculateTrainTime(current.coordinates, neighbor.coordinates, network.averageTrainSpeed);
                             double newTime = currentTime + trainTime;
                             if (newTime < times.getOrDefault(neighbor, Double.MAX_VALUE)) {
                                 times.put(neighbor, newTime);
@@ -87,7 +92,6 @@ class UrbanTransportationApp implements Serializable {
                 times.put(network.destinationPoint, minTime);
                 previous.put(network.destinationPoint, nearestStation);
                 directionMap.put(network.destinationPoint, new RouteDirection(nearestStation.description, "Final Destination", minTime - times.get(nearestStation), false));
-                queue.add(network.destinationPoint);
                 System.out.println("Adding walk to final destination from: " + nearestStation.description + " with time: " + minTime);
             }
         }
@@ -106,7 +110,18 @@ class UrbanTransportationApp implements Serializable {
             routeDirections.add(directionMap.get(end));
         }
 
+        // Print the final path for debugging
+        System.out.println("Final path:");
+        for (Station station : path) {
+            System.out.println(station.description + " at (" + station.coordinates.x + ", " + station.coordinates.y + ")");
+        }
+
         return routeDirections;
+    }
+
+    private double calculateTrainTime(Point start, Point end, double trainSpeed) {
+        double distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+        return distance / trainSpeed;
     }
 
     private double calculateWalkTime(Point start, Point end, double walkingSpeed) {
