@@ -18,8 +18,8 @@ class UrbanTransportationApp implements Serializable {
         PriorityQueue<Station> queue = new PriorityQueue<>(Comparator.comparingDouble(times::get));
 
         // Print train speed and walking speed
-        System.out.println("Train speed: " + network.averageTrainSpeed + " m/min");
-        System.out.println("Walking speed: " + network.averageWalkingSpeed + " m/min");
+        // System.out.println("Train speed: " + network.averageTrainSpeed + " m/min");
+        // System.out.println("Walking speed: " + network.averageWalkingSpeed + " m/min");
 
         // Initialize start point
         times.put(network.startPoint, 0.0);
@@ -29,11 +29,11 @@ class UrbanTransportationApp implements Serializable {
             Station current = queue.poll();
             double currentTime = times.get(current);
 
-            System.out.println("Visiting station: " + current.description + " with current time: " + currentTime);
+            // System.out.println("Visiting station: " + current.description + " with current time: " + currentTime);
 
             // If we reached the destination, break the loop
             if (current.equals(network.destinationPoint)) {
-                System.out.println("Reached destination: " + current.description);
+                // System.out.println("Reached destination: " + current.description);
                 break;
             }
 
@@ -51,7 +51,7 @@ class UrbanTransportationApp implements Serializable {
                                 previous.put(neighbor, current);
                                 directionMap.put(neighbor, new RouteDirection(current.description, neighbor.description, trainTime, true));
                                 queue.add(neighbor);
-                                System.out.println("Adding neighbor via train: " + neighbor.description + " with time: " + newTime);
+                                // System.out.println("Adding neighbor via train: " + neighbor.description + " with time: " + newTime);
                             }
                         }
                     }
@@ -69,7 +69,7 @@ class UrbanTransportationApp implements Serializable {
                             previous.put(neighbor, current);
                             directionMap.put(neighbor, new RouteDirection(current.description, neighbor.description, walkTime, false));
                             queue.add(neighbor);
-                            System.out.println("Adding neighbor via walking: " + neighbor.description + " with time: " + newTime);
+                            // System.out.println("Adding neighbor via walking: " + neighbor.description + " with time: " + newTime);
                         }
                     }
                 }
@@ -92,7 +92,7 @@ class UrbanTransportationApp implements Serializable {
                 times.put(network.destinationPoint, minTime);
                 previous.put(network.destinationPoint, nearestStation);
                 directionMap.put(network.destinationPoint, new RouteDirection(nearestStation.description, "Final Destination", minTime - times.get(nearestStation), false));
-                System.out.println("Adding walk to final destination from: " + nearestStation.description + " with time: " + minTime);
+                // System.out.println("Adding walk to final destination from: " + nearestStation.description + " with time: " + minTime);
             }
         }
 
@@ -111,10 +111,10 @@ class UrbanTransportationApp implements Serializable {
         }
 
         // Print the final path for debugging
-        System.out.println("Final path:");
-        for (Station station : path) {
-            System.out.println(station.description + " at (" + station.coordinates.x + ", " + station.coordinates.y + ")");
-        }
+        // System.out.println("Final path:");
+        // for (Station station : path) {
+        //     System.out.println(station.description + " at (" + station.coordinates.x + ", " + station.coordinates.y + ")");
+        // }
 
         return routeDirections;
     }
