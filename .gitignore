@@ -259,3 +259,16 @@ pyrightconfig.json
 .DS_Store
 AIN422/Assignment 3/HGNC_results.txt
 BBM204/2024/Assignment 4/docs/BBM204PA4__2024__(2).pdf
+AIN433/Spring/Assignment 3/notebooks/models/best_model_dropout_0.5.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_dropout_0.25.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_dropout_0.75.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_dropout_1.0.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_efficient_64_1e-4_conv.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_efficient_64_1e-4.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_lr_0.0001_bs_32.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_lr_0.001_bs_32.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_lr_0.0001_bs_64.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_lr_0.001_bs_64.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_lr_1e-06_bs_32.pth
+AIN433/Spring/Assignment 3/notebooks/models/best_model_lr_1e-06_bs_64.pth
+AIN433/Spring/Assignment 3/docs/pa3_sheet_418.pdf
