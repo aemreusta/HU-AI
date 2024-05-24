@@ -1,0 +1,9 @@
+Query received: "ab" with limit 1. Showing results:
+- 123312 ab
+Query received: "a" with limit 0. Showing results:
+No results.
+Query received: "ad" with limit 4. Showing results:
+- 12313 ad
+Query received: "ba" with limit 2. Showing results:
+- 99982 bad
+- 56565 ba
