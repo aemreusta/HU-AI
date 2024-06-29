@@ -1,0 +1,234 @@
+### MISSION GROUNDWORK START ###
+-----------------------------------------------------------------
+Schedule Type: Earliest
+-----------------------------------------------------------------
+Project name: Space Probe Construction
+-----------------------------------------------------------------
+Task ID   Description                                  Start  End  
+-----------------------------------------------------------------
+0         Space Probe Hull Construction                0      5    
+1         Hardware and Operating System Installation   5      9    
+2         Radar Installation                           9      11   
+3         Navigation Module Installation               13     14   
+4         Antenna and Communication HW/SW Installation 9      13   
+5         Testing and Finalizing Project               14     17   
+-----------------------------------------------------------------
+Project will be completed in 17 days.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Schedule Type: Latest
+-----------------------------------------------------------------
+Project name: Space Probe Construction
+-----------------------------------------------------------------
+Task ID   Description                                  Start  End  
+-----------------------------------------------------------------
+0         Space Probe Hull Construction                0      5    
+1         Hardware and Operating System Installation   5      9    
+2         Radar Installation                           11     13   
+3         Navigation Module Installation               13     14   
+4         Antenna and Communication HW/SW Installation 9      13   
+5         Testing and Finalizing Project               14     17   
+-----------------------------------------------------------------
+Project will be completed in 17 days.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Mobility Analysis
+-----------------------------------------------------------------
+Task ID   Description                                  Mobility
+-----------------------------------------------------------------
+0         Space Probe Hull Construction                0      
+1         Hardware and Operating System Installation   0      
+2         Radar Installation                           2      
+3         Navigation Module Installation               0      
+4         Antenna and Communication HW/SW Installation 0      
+5         Testing and Finalizing Project               0      
+-----------------------------------------------------------------
+Critical Tasks
+-----------------------------------------------------------------
+Task ID   Description                                  
+-----------------------------------------------------------------
+0         Space Probe Hull Construction                
+1         Hardware and Operating System Installation   
+3         Navigation Module Installation               
+4         Antenna and Communication HW/SW Installation 
+5         Testing and Finalizing Project               
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Schedule Type: Earliest
+-----------------------------------------------------------------
+Project name: Space Shuttle Construction
+-----------------------------------------------------------------
+Task ID   Description                                  Start  End  
+-----------------------------------------------------------------
+0         Space Shuttle Hull Construction              0      17   
+1         Space Shuttle Operating System               23     28   
+2         Space Shuttle Computational Hardware         17     23   
+3         Communication Hardware                       28     37   
+4         Communication Software                       37     44   
+5         Antenna Module Installation                  17     19   
+6         Encryption Software                          44     53   
+7         Radar Hardware                               28     38   
+8         Radar Software                               53     58   
+9         Navigator Module                             58     62   
+10        Radar Construction                           17     28   
+11        Navigation Software                          62     68   
+12        Testing and Project Finalizing               68     78   
+-----------------------------------------------------------------
+Project will be completed in 78 days.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Schedule Type: Latest
+-----------------------------------------------------------------
+Project name: Space Shuttle Construction
+-----------------------------------------------------------------
+Task ID   Description                                  Start  End  
+-----------------------------------------------------------------
+0         Space Shuttle Hull Construction              0      17   
+1         Space Shuttle Operating System               23     28   
+2         Space Shuttle Computational Hardware         17     23   
+3         Communication Hardware                       28     37   
+4         Communication Software                       37     44   
+5         Antenna Module Installation                  26     28   
+6         Encryption Software                          44     53   
+7         Radar Hardware                               43     53   
+8         Radar Software                               53     58   
+9         Navigator Module                             58     62   
+10        Radar Construction                           32     43   
+11        Navigation Software                          62     68   
+12        Testing and Project Finalizing               68     78   
+-----------------------------------------------------------------
+Project will be completed in 78 days.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Mobility Analysis
+-----------------------------------------------------------------
+Task ID   Description                                  Mobility
+-----------------------------------------------------------------
+0         Space Shuttle Hull Construction              0      
+1         Space Shuttle Operating System               0      
+2         Space Shuttle Computational Hardware         0      
+3         Communication Hardware                       0      
+4         Communication Software                       0      
+5         Antenna Module Installation                  9      
+6         Encryption Software                          0      
+7         Radar Hardware                               15     
+8         Radar Software                               0      
+9         Navigator Module                             0      
+10        Radar Construction                           15     
+11        Navigation Software                          0      
+12        Testing and Project Finalizing               0      
+-----------------------------------------------------------------
+Critical Tasks
+-----------------------------------------------------------------
+Task ID   Description                                  
+-----------------------------------------------------------------
+0         Space Shuttle Hull Construction              
+1         Space Shuttle Operating System               
+2         Space Shuttle Computational Hardware         
+3         Communication Hardware                       
+4         Communication Software                       
+6         Encryption Software                          
+8         Radar Software                               
+9         Navigator Module                             
+11        Navigation Software                          
+12        Testing and Project Finalizing               
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Schedule Type: Earliest
+-----------------------------------------------------------------
+Project name: Space Suit Development
+-----------------------------------------------------------------
+Task ID   Description                                  Start  End  
+-----------------------------------------------------------------
+0         Research Facility                            0      10   
+1         Testing Facility                             20     30   
+2         Production Facility                          10     20   
+3         Fabric Production                            20     25   
+4         Fabric Research                              10     14   
+5         Fabric Testing                               30     31   
+6         Glass Testing                                30     31   
+7         Glass Research                               10     13   
+8         Glass Production                             20     26   
+9         Radio Production                             31     35   
+10        Radio Testing                                35     36   
+11        Radio Hardware Development                   10     17   
+12        Space Suit Production                        36     46   
+13        Space Suit Testing                           46     49   
+-----------------------------------------------------------------
+Project will be completed in 49 days.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Schedule Type: Latest
+-----------------------------------------------------------------
+Project name: Space Suit Development
+-----------------------------------------------------------------
+Task ID   Description                                  Start  End  
+-----------------------------------------------------------------
+0         Research Facility                            0      10   
+1         Testing Facility                             20     30   
+2         Production Facility                          10     20   
+3         Fabric Production                            25     30   
+4         Fabric Research                              21     25   
+5         Fabric Testing                               30     31   
+6         Glass Testing                                30     31   
+7         Glass Research                               21     24   
+8         Glass Production                             24     30   
+9         Radio Production                             31     35   
+10        Radio Testing                                35     36   
+11        Radio Hardware Development                   24     31   
+12        Space Suit Production                        36     46   
+13        Space Suit Testing                           46     49   
+-----------------------------------------------------------------
+Project will be completed in 49 days.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Mobility Analysis
+-----------------------------------------------------------------
+Task ID   Description                                  Mobility
+-----------------------------------------------------------------
+0         Research Facility                            0      
+1         Testing Facility                             0      
+2         Production Facility                          0      
+3         Fabric Production                            5      
+4         Fabric Research                              11     
+5         Fabric Testing                               0      
+6         Glass Testing                                0      
+7         Glass Research                               11     
+8         Glass Production                             4      
+9         Radio Production                             0      
+10        Radio Testing                                0      
+11        Radio Hardware Development                   14     
+12        Space Suit Production                        0      
+13        Space Suit Testing                           0      
+-----------------------------------------------------------------
+Critical Tasks
+-----------------------------------------------------------------
+Task ID   Description                                  
+-----------------------------------------------------------------
+0         Research Facility                            
+1         Testing Facility                             
+2         Production Facility                          
+5         Fabric Testing                               
+6         Glass Testing                                
+9         Radio Production                             
+10        Radio Testing                                
+12        Space Suit Production                        
+13        Space Suit Testing                           
+-----------------------------------------------------------------
+### MISSION GROUNDWORK END ###
+### MISSION EXPLORATION START ###
+13 solar systems have been discovered.
+Planets in Solar System 1: [D695, D974, D1625, D2026, D2059, D3320, D7038, D7479, D8191, D8191C, D8525, D9155]
+Planets in Solar System 2: [D480, D1991, D2635, D3435, D4499, D4939, D4970, D6240, D7744, D8023, D8844]
+Planets in Solar System 3: [D1290, D2358, D2416, D4387, D6880, D8839, D9371, D9985]
+Planets in Solar System 4: [D156, D978, D2296, D2710, D3176, D3675, D5585, D6353, D6393, D6674, D7599, D9493, D9702]
+Planets in Solar System 5: [D803, D1993, D3629, D4483, D6897, D7754, D8326, D8380, D8491]
+Planets in Solar System 6: [D1559, D1633, D1661, D2092, D2860, D5482, D6386, D7771, D8537, D9099, D9186, D9827]
+Planets in Solar System 7: [D318, D777, D1099, D1756, D2421, D2694, D3556, D4333, D5258, D5621, D6369, D8485, D8972, D9068, D9926]
+Planets in Solar System 8: [D540, D1076, D2547, D4072, D5540, D5670, D7070, D8009]
+Planets in Solar System 9: [D641, D652, D739, D2096, D3327, D4275, D4712, D5606, D6542, D8493, D9957]
+Planets in Solar System 10: [D271, D703, D1493, D3250, D5820, D5898, D6575]
+Planets in Solar System 11: [D238, D865, D2405, D2975, D3117, D3137, D5017, D5342, D6387, D7266, D7574, D9949]
+Planets in Solar System 12: [D1408, D2147, D2871, D5782, D7001, D7467, D7564, D7796, D9387, D9954]
+Planets in Solar System 13: [D931, D1172, D2745, D2774, D5364, D8503, D9942]
+### MISSION EXPLORATION END ###
