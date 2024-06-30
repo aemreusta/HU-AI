@@ -7,7 +7,7 @@ public class Main {
 
         args[0] = "/Users/emre/GitHub/HU-AI/BBM204/2024/Resit Assignment/input/groundwork_input_1.xml";
 
-        args[1] = "/Users/emre/GitHub/HU-AI/BBM204/2024/Resit Assignment/input/exploration_input_1.xml";
+        args[1] = "/Users/emre/GitHub/HU-AI/BBM204/2024/Resit Assignment/input/exploration_input_2.xml";
 
         System.out.println("### MISSION GROUNDWORK START ###");
         MissionGroundwork missionGroundwork = new MissionGroundwork();
