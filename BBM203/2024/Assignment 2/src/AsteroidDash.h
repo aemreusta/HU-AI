@@ -68,6 +68,11 @@ public:
 
     // Corresponds to the SHOOT command.
     void shoot();
+
+    // Add these members to AsteroidDash.h (inside the AsteroidDash class definition)
+    int grid_height;
+    int grid_width;
+
 };
 
 

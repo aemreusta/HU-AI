@@ -1,4 +1,7 @@
 #include "Test.h"
+#include <fstream>
+#include <sstream>
+#include <iostream> // If not already included
 
 // "initialize_grid" // 2.5%
 void initialize_grid() {

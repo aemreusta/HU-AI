@@ -19,7 +19,6 @@ public:
 
     // Last played time
     time_t last_played;
-
     // Player name
     string player_name;
 

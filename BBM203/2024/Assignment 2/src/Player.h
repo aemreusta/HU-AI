@@ -33,16 +33,19 @@ public:
     Player(const vector<vector<bool>> &shape, int row, int col, const string &player_name, int max_ammo = 10,
            int lives = 3);
 
+    // Destructor
+    ~Player();
+
     // Move player in the space grid
     void move_left();
 
     // Move player to the right in the space grid
     void move_right(int grid_width);
 
-    // Move player to the up in the space grid
+    // Move player up in the space grid
     void move_up();
 
-    // Move player to the down in the space grid
+    // Move player down in the space grid
     void move_down(int grid_height);
 };
 
