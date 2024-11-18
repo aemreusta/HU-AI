@@ -71,6 +71,24 @@ void AsteroidDash::read_player(const string &player_file_name, const string &pla
 }
 
 // Function to read celestial objects from a file
+#include <unordered_map>
+
+// Helper function to parse ObjectType from a string or integer
+ObjectType parse_object_type(const std::string &type_str) {
+    static const std::unordered_map<std::string, ObjectType> type_map = {
+        {"0", ObjectType::ASTEROID},
+        {"1", ObjectType::LIFE_UP},
+        {"2", ObjectType::AMMO},
+    };
+
+    auto it = type_map.find(type_str);
+    if (it != type_map.end()) {
+        return it->second;
+    }
+
+    throw std::invalid_argument("Invalid object type: " + type_str);
+}
+
 void AsteroidDash::read_celestial_objects(const string &input_file) {
     ifstream file(input_file);
     if (!file.is_open()) {
@@ -80,30 +98,46 @@ void AsteroidDash::read_celestial_objects(const string &input_file) {
 
     string line;
     while (getline(file, line)) {
-        // Parse celestial object data
         if (line.empty()) continue;
 
-        vector<vector<bool>> shape;
         stringstream ss(line);
-        char opening_char = ss.peek();
+        vector<vector<bool>> shape;
+        int starting_row, time_of_appearance;
+        std::string type_str;
 
-        if (opening_char == '[' || opening_char == '{') {
-            vector<bool> row_vec;
-            while (ss >> line && line[0] != 's') {
-                row_vec.clear();
-                for (char ch : line) {
-                    if (ch == '1') row_vec.push_back(true);
-                    else if (ch == '0') row_vec.push_back(false);
-                }
-                shape.push_back(row_vec);
+        // Parse the shape
+        string shape_line;
+        while (getline(file, shape_line) && !shape_line.empty()) {
+            vector<bool> row;
+            for (char ch : shape_line) {
+                if (ch == '1') row.push_back(true);
+                else if (ch == '0') row.push_back(false);
+            }
+
+            if (!row.empty()) {
+                shape.push_back(row);
             }
         }
 
-        int starting_row, time_of_appearance;
-        ObjectType type = (opening_char == '[') ? ASTEROID : (line.find("life") != string::npos ? LIFE_UP : AMMO);
+        // Validate shape
+        if (shape.empty()) {
+            cerr << "Error: Parsed celestial object has an empty shape!" << endl;
+            continue;
+        }
 
-        ss >> starting_row >> time_of_appearance;
+        // Parse remaining parameters
+        ss >> starting_row >> time_of_appearance >> type_str;
 
+        // Convert type string to ObjectType
+        ObjectType type;
+        try {
+            type = parse_object_type(type_str);
+        } catch (const std::invalid_argument &e) {
+            cerr << e.what() << endl;
+            continue;
+        }
+
+        // Create and link the celestial object
         auto *new_object = new CelestialObject(shape, type, starting_row, time_of_appearance);
         new_object->next_celestial_object = celestial_objects_list_head;
         celestial_objects_list_head = new_object;
@@ -111,6 +145,8 @@ void AsteroidDash::read_celestial_objects(const string &input_file) {
 
     file.close();
 }
+
+
 
 // Print the entire space grid
 void AsteroidDash::print_space_grid() const {

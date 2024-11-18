@@ -27,7 +27,7 @@ public:
     // Pointer to the object's clockwise neighbor (its right rotation)
     CelestialObject *right_rotation = nullptr;
 
-    // Pointer to the object's clockwise neighbor (its left rotation)
+    // Pointer to the object's counterclockwise neighbor (its left rotation)
     CelestialObject *left_rotation = nullptr;
 
     // Pointer to the next celestial object in the list
@@ -42,9 +42,14 @@ public:
     // The step in the game after which the object will appear on the grid
     int time_of_appearance;
 
-    // Function to delete rotations of a given celestial object. It should free the dynamically allocated
-    // space for each rotation.
+    // Function to delete rotations of a given celestial object
     static void delete_rotations(CelestialObject *target);
+
+    // Function to rotate the shape of the celestial object to the right
+    static vector<vector<bool>> rotate_shape_right(const vector<vector<bool>> &shape);
+
+    // Function to generate rotations of the celestial object
+    void generate_rotations();
 };
 
 #endif // CELESTIALOBJECT_H
