@@ -138,37 +138,37 @@ void RoutePlanner::exploreFromProvince(int province) {
     }
 
     if (!isExplorationComplete()) {
-        // std::cout << "Exploration not complete, backtracking..." << std::endl;
-        backtrack();
+        backtrack();  // Backtrack if the exploration is not complete
+        // After backtracking, continue exploration from the last valid province
+        if (!stack.isEmpty()) {
+            int previousProvince = stack.peek();
+            exploreFromProvince(previousProvince);  // Continue exploration from the previous province
+        }
     }
 }
 
 void RoutePlanner::backtrack() {
-    // If stack is empty, no more provinces to backtrack to
-    if (stack.isEmpty()) {
-        std::cout << "Exploration completed. No more provinces to visit." << std::endl;
-        return;  // End the exploration if there's nothing left to backtrack to
-    }
+    if (!stack.isEmpty()) {
+        stack.pop();  // Pop the last province from the stack
 
-    // Pop the last province from the stack and attempt to backtrack
-    stack.pop();
-    
-    if (stack.isEmpty()) {
-        return;  // If the stack is empty after pop, no more provinces to backtrack to
-    }
+        if (stack.isEmpty()) {
+            return;  // If the stack is empty, no more backtracking possible
+        }
 
-    int previousProvince = stack.peek();  // Peek at the last valid province
-    exploreFromProvince(previousProvince);  // Continue exploring from that province
+        // The exploration will continue after popping from the stack
+    }
 }
+
 
 void RoutePlanner::enqueueNeighbors(int province) {
     for (int i = 0; i < 81; ++i) {
-        if (i != province && map.isWithinRange(province, i, maxDistance) && !map.isVisited(i)) {
-            // Prioritize neighboring provinces that are priority provinces
-            if (isPriorityProvince(i)) {
-                queue.enqueuePriority(i);  // Enqueue with priority if applicable
-            } else {
-                queue.enqueue(i);  // Normal enqueue for other provinces
+        if (i != province && !map.isVisited(i)) {
+            if (map.isWithinRange(province, i, maxDistance) && !isWeatherRestricted(i)) {
+                if (isPriorityProvince(i)) {
+                    queue.enqueuePriority(i);  // Enqueue with priority if it is a priority province
+                } else {
+                    queue.enqueue(i);  // Enqueue normally for other provinces
+                }
             }
         }
     }
