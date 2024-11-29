@@ -109,9 +109,16 @@ void RoutePlanner::exploreRoute(int startingCity) {
 }
 
 void RoutePlanner::exploreFromProvince(int province) {
-    enqueueNeighbors(province);
+    // enqueueNeighbors(province);
+    // enqueue just one neighbor not all
+    queue.enqueue(province);
 
     while (!queue.isEmpty()) {
+        // check maxdistance before dequeue
+        if (totalDistanceCovered > maxDistance) {
+            backtrack();
+            return;
+        }
         int nextProvince = queue.dequeue();
         
         // Skip if the province is weather-restricted
@@ -155,21 +162,36 @@ void RoutePlanner::backtrack() {
         int lastProvince = stack.pop();
         if (!stack.isEmpty()) {
             int previousProvince = stack.peek();
-            totalDistanceCovered -= map.getDistance(previousProvince, lastProvince);
             exploreFromProvince(previousProvince);
         }
     }
 }
 
 bool RoutePlanner::isExplorationComplete() const {
-    // Check if all priority provinces are visited
-    for (int i = 0; i < numPriorityProvinces; ++i) {
-        if (!map.isVisited(priorityProvinces[i])) {
-            return false;
+    // Check if stack and queue are both empty
+    if (stack.isEmpty() && queue.isEmpty()) {
+        return true;
+    }
+
+    // Check if no unvisited neighbors within range
+    for (int i = 0; i < MAX_SIZE; ++i) {
+        if (!map.isVisited(i)) {  // If province i has not been visited
+            bool hasUnvisitedNeighbor = false;
+            for (int j = 0; j < MAX_SIZE; ++j) {
+                if (!map.isVisited(j) && map.isWithinRange(i, j, maxDistance)) {
+                    hasUnvisitedNeighbor = true;
+                    break;
+                }
+            }
+            if (hasUnvisitedNeighbor) {
+                return false;  // Still some unvisited neighbor within range
+            }
         }
     }
-    return true;
+
+    return true;  // No unvisited neighbors within range
 }
+
 
 void RoutePlanner::displayResults() const {
     std::cout << "----------------------------" << std::endl;
