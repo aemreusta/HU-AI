@@ -179,9 +179,13 @@ void RoutePlanner::displayResults() const {
     std::cout << "Total Distance Covered: " << totalDistanceCovered << " km" << std::endl;
     
     std::cout << "Route Taken: " << std::endl;
-    for (int province : route) {
-        std::cout << cities[province] << " -> ";
+    for (size_t i = 0; i < route.size(); ++i) {
+        std::cout << cities[route[i]];
+        if (i < route.size() - 1) {
+            std::cout << " -> ";
+        }
     }
+    std::cout << std::endl;
 
     // Priority Province Status
     std::cout << "Priority Provinces Status:" << std::endl;
