@@ -2,16 +2,16 @@
 #define MAP_H
 
 #include <string>
+#include <vector>
 
-const int MAX_SIZE = 0;  // TO DO: Define maximum number of provinces considering the problem at hand
+const int MAX_SIZE = 81;  // Define maximum number of provinces
 
 class Map {
-
-public:
-
-    int distanceMatrix;      // TO DO: Define 2D distance matrix between provinces
+private:
+    std::vector<std::vector<int>> distanceMatrix; // 2D distance matrix between provinces
     bool visited[MAX_SIZE];  // Tracks visited provinces
 
+public:
     Map(); // Constructor to initialize the map
 
     // Loads distance data from an Excel file (or predefined format) and fills the distanceMatrix

@@ -1,14 +1,14 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#define MAX_QUEUE_SIZE 0  // // TO DO: Define a maximum size for the queue to control memory usage considering the problem at hand
+#define MAX_QUEUE_SIZE 100  // Define a maximum size for the queue
 
 class Queue {
+private:
+    int front, rear, size;   // Indices for the front and rear elements of the queue, and the current size
+    int data[MAX_QUEUE_SIZE]; // Static array to store provinces as integers (province IDs)
 
 public:
-    int front, rear;          // Indices for the front and rear elements of the queue
-    int data[MAX_QUEUE_SIZE]; // Static array to store provinces as integers (province IDs) 
-    
     Queue();                  // Constructor to initialize the queue
 
     // Adds a province to the end of the queue
