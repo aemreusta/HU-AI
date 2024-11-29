@@ -100,72 +100,74 @@ bool RoutePlanner::isWeatherRestricted(int province) const {
 // Begins the route exploration from the starting point
 void RoutePlanner::exploreRoute(int startingCity) {
     map.markAsVisited(startingCity);
-    stack.push(startingCity);
-    route.push_back(startingCity);
+    stack.push(startingCity);  // Track the start in the stack for potential backtracking
+    route.push_back(startingCity);  // Record the starting city in the route
+    totalDistanceCovered = 0;  // Initialize distance covered
 
-    exploreFromProvince(startingCity);
+    exploreFromProvince(startingCity);  // Start the exploration from the starting city
 
-    displayResults();
+    displayResults();  // Display the final results after the exploration is complete
 }
 
+
 void RoutePlanner::exploreFromProvince(int province) {
-    // enqueueNeighbors(province);
-    // enqueue just one neighbor not all
-    queue.enqueue(province);
+    // std::cout << "Exploring from province: " << cities[province] << std::endl;
+    
+    enqueueNeighbors(province);  // Enqueue neighbors of the current province
 
     while (!queue.isEmpty()) {
-        // check maxdistance before dequeue
-        if (totalDistanceCovered > maxDistance) {
-            backtrack();
-            return;
-        }
-        int nextProvince = queue.dequeue();
-        
-        // Skip if the province is weather-restricted
+        int nextProvince = queue.dequeue();  // Dequeue the next province to explore
+        // std::cout << "Dequeueing province: " << cities[nextProvince] << std::endl;
+
         if (isWeatherRestricted(nextProvince)) {
             std::cout << "Province " << cities[nextProvince] << " is weather-restricted. Skipping." << std::endl;
             continue;
         }
-        
-        // Continue exploration if unvisited and within distance constraints
+
         if (!map.isVisited(nextProvince)) {
             int distance = map.getDistance(province, nextProvince);
-            if (distance != -1 && totalDistanceCovered + distance <= maxDistance) {
+            if (distance != -1 && distance <= maxDistance) {
                 map.markAsVisited(nextProvince);
                 stack.push(nextProvince);
                 route.push_back(nextProvince);
                 totalDistanceCovered += distance;
-                exploreFromProvince(nextProvince);
+                // std::cout << "Visiting province: " << cities[nextProvince] << " (distance: " << distance << " km)" << std::endl;
+                exploreFromProvince(nextProvince);  // Explore further from the next province
             }
         }
     }
 
     if (!isExplorationComplete()) {
+        std::cout << "Exploration not complete, backtracking..." << std::endl;
         backtrack();
-    }
-}
-
-void RoutePlanner::enqueueNeighbors(int province) {
-    for (int i = 0; i < 81; ++i) {
-        if (i != province && map.isWithinRange(province, i, maxDistance) && !map.isVisited(i)) {
-            if (isPriorityProvince(i)) {
-                queue.enqueuePriority(i);
-            } else {
-                queue.enqueue(i);
-            }
-        }
     }
 }
 
 void RoutePlanner::backtrack() {
     if (!stack.isEmpty()) {
         int lastProvince = stack.pop();
+        std::cout << "Backtracking to: " << cities[lastProvince] << std::endl;
+
         if (!stack.isEmpty()) {
             int previousProvince = stack.peek();
-            exploreFromProvince(previousProvince);
+            exploreFromProvince(previousProvince);  // Explore from the previous province
         }
     }
 }
+
+void RoutePlanner::enqueueNeighbors(int province) {
+    for (int i = 0; i < 81; ++i) {
+        if (i != province && map.isWithinRange(province, i, maxDistance) && !map.isVisited(i)) {
+            // Prioritize neighboring provinces that are priority provinces
+            if (isPriorityProvince(i)) {
+                queue.enqueuePriority(i);  // Enqueue with priority if applicable
+            } else {
+                queue.enqueue(i);  // Normal enqueue for other provinces
+            }
+        }
+    }
+}
+
 
 bool RoutePlanner::isExplorationComplete() const {
     // Check if stack and queue are both empty
