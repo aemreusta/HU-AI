@@ -138,21 +138,27 @@ void RoutePlanner::exploreFromProvince(int province) {
     }
 
     if (!isExplorationComplete()) {
-        std::cout << "Exploration not complete, backtracking..." << std::endl;
+        // std::cout << "Exploration not complete, backtracking..." << std::endl;
         backtrack();
     }
 }
 
 void RoutePlanner::backtrack() {
-    if (!stack.isEmpty()) {
-        int lastProvince = stack.pop();
-        std::cout << "Backtracking to: " << cities[lastProvince] << std::endl;
-
-        if (!stack.isEmpty()) {
-            int previousProvince = stack.peek();
-            exploreFromProvince(previousProvince);  // Explore from the previous province
-        }
+    // If stack is empty, no more provinces to backtrack to
+    if (stack.isEmpty()) {
+        std::cout << "Exploration completed. No more provinces to visit." << std::endl;
+        return;  // End the exploration if there's nothing left to backtrack to
     }
+
+    // Pop the last province from the stack and attempt to backtrack
+    stack.pop();
+    
+    if (stack.isEmpty()) {
+        return;  // If the stack is empty after pop, no more provinces to backtrack to
+    }
+
+    int previousProvince = stack.peek();  // Peek at the last valid province
+    exploreFromProvince(previousProvince);  // Continue exploring from that province
 }
 
 void RoutePlanner::enqueueNeighbors(int province) {
