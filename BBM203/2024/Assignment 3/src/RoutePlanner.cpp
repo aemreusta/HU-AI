@@ -62,12 +62,13 @@ void RoutePlanner::loadWeatherRestrictedProvinces(const std::string& filename) {
     std::string line;
     numWeatherRestrictedProvinces = 0;
     while (std::getline(file, line) && numWeatherRestrictedProvinces < MAX_WEATHER_RESTRICTED_PROVINCES) {
-        std::istringstream ss(line);
-        std::string city;
-        while (std::getline(ss, city, ',')) {
+        size_t pos = line.find('(');
+        if (pos != std::string::npos) {
+            std::string city = line.substr(0, pos - 1);
+            int index = std::stoi(line.substr(pos + 1, line.find(')') - pos - 1));
             for (int i = 0; i < 81; ++i) {
                 if (cities[i] == city) {
-                    weatherRestrictedProvinces[numWeatherRestrictedProvinces++] = i;
+                    weatherRestrictedProvinces[numWeatherRestrictedProvinces++] = index;
                     break;
                 }
             }
