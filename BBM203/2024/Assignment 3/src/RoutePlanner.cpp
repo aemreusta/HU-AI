@@ -171,7 +171,6 @@ bool RoutePlanner::isExplorationComplete() const {
     return true;
 }
 
-
 void RoutePlanner::displayResults() const {
     std::cout << "----------------------------" << std::endl;
     std::cout << "Journey Completed!" << std::endl;
