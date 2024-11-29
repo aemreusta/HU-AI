@@ -36,12 +36,13 @@ void RoutePlanner::loadPriorityProvinces(const std::string& filename) {
     std::string line;
     numPriorityProvinces = 0;
     while (std::getline(file, line) && numPriorityProvinces < MAX_PRIORITY_PROVINCES) {
-        std::istringstream ss(line);
-        std::string city;
-        while (std::getline(ss, city, ',')) {
+        size_t pos = line.find('(');
+        if (pos != std::string::npos) {
+            std::string city = line.substr(0, pos - 1);
+            int index = std::stoi(line.substr(pos + 1, line.find(')') - pos - 1));
             for (int i = 0; i < 81; ++i) {
                 if (cities[i] == city) {
-                    priorityProvinces[numPriorityProvinces++] = i;
+                    priorityProvinces[numPriorityProvinces++] = index;
                     break;
                 }
             }
@@ -106,13 +107,20 @@ void RoutePlanner::exploreRoute(int startingCity) {
     displayResults();
 }
 
-// Helper function to explore from a specific province
 void RoutePlanner::exploreFromProvince(int province) {
     enqueueNeighbors(province);
 
     while (!queue.isEmpty()) {
         int nextProvince = queue.dequeue();
-        if (!map.isVisited(nextProvince) && !isWeatherRestricted(nextProvince)) {
+        
+        // Skip if the province is weather-restricted
+        if (isWeatherRestricted(nextProvince)) {
+            std::cout << "Province " << cities[nextProvince] << " is weather-restricted. Skipping." << std::endl;
+            continue;
+        }
+        
+        // Continue exploration if unvisited and within distance constraints
+        if (!map.isVisited(nextProvince)) {
             int distance = map.getDistance(province, nextProvince);
             if (distance != -1 && totalDistanceCovered + distance <= maxDistance) {
                 map.markAsVisited(nextProvince);
@@ -153,6 +161,7 @@ void RoutePlanner::backtrack() {
 }
 
 bool RoutePlanner::isExplorationComplete() const {
+    // Check if all priority provinces are visited
     for (int i = 0; i < numPriorityProvinces; ++i) {
         if (!map.isVisited(priorityProvinces[i])) {
             return false;
@@ -161,18 +170,35 @@ bool RoutePlanner::isExplorationComplete() const {
     return true;
 }
 
-void RoutePlanner::displayResults() const {
-    std::cout << "Journey Completed!" << std::endl;
-    std::cout << "Total Provinces Visited: " << route.size() << std::endl;
-    std::cout << "Total Distance Covered: " << totalDistanceCovered << " km" << std::endl;
-    std::cout << "Route: ";
-    for (int province : route) {
-        std::cout << cities[province] << " ";
-    }
-    std::cout << std::endl;
 
-    std::cout << "Priority Province Summary:" << std::endl;
+void RoutePlanner::displayResults() const {
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "Journey Completed!" << std::endl;
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "Total Number of Provinces Visited: " << route.size() << std::endl;
+    std::cout << "Total Distance Covered: " << totalDistanceCovered << " km" << std::endl;
+    
+    std::cout << "Route Taken: " << std::endl;
+    for (int province : route) {
+        std::cout << cities[province] << " -> ";
+    }
+
+    // Priority Province Status
+    std::cout << "Priority Provinces Status:" << std::endl;
+    int totalVisitedPriority = 0;
     for (int i = 0; i < numPriorityProvinces; ++i) {
-        std::cout << cities[priorityProvinces[i]] << ": " << (map.isVisited(priorityProvinces[i]) ? "Visited" : "Not Visited") << std::endl;
+        std::string visitStatus = map.isVisited(priorityProvinces[i]) ? "Visited" : "Not Visited";
+        std::cout << "- " << cities[priorityProvinces[i]] << " (" << visitStatus << ")" << std::endl;
+        if (map.isVisited(priorityProvinces[i])) {
+            totalVisitedPriority++;
+        }
+    }
+    std::cout << "Total Priority Provinces Visited: " << totalVisitedPriority << " out of " << numPriorityProvinces << std::endl;
+
+    // Success message for all visited priority provinces
+    if (totalVisitedPriority == numPriorityProvinces) {
+        std::cout << "Success: All priority provinces were visited." << std::endl;
+    } else {
+        std::cout << "Warning: Not all priority provinces were visited." << std::endl;
     }
 }
