@@ -64,7 +64,7 @@ public:
     // Initilize tree from a vector
     void initializeMap(std::vector<Isle *> isles);
 
-    MapNode *findFirstEmptyIsle(MapNode *node);
+    // MapNode *findFirstEmptyIsle(MapNode *node);
     
 
     int getDepth(MapNode *node); // Determines the depth of a node within the tree.

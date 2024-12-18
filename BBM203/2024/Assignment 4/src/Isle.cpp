@@ -30,6 +30,10 @@ bool Isle::increaseShaperCount()
     // TODO: Increase shaperCount if necessary
     // return isFull, True if capacity is exceded, false otherwise
 
+    this->shaperCount++;
+    if(this->shaperCount > this->capacity)
+        isFull = true;
+
     return isFull;
 }
 
@@ -40,24 +44,34 @@ bool Isle::decreaseShaperCount()
     // TODO: Decrease shaperCount if necessary
     // return isEmpty, True if shaper count less and equal to 0, false otherwise
 
+    this->shaperCount--;
+    if(this->shaperCount > 0)
+        isEmpty = false;
+
     return isEmpty;
 }
 
 bool Isle::operator==(const Isle &other) const
 {
     // TODO: Compare by name, return true if same
+    if(this->name == other.name)
+        return true;
     return false;
 }
 
 bool Isle::operator<(const Isle &other) const
 {
     // TODO: Compare by name
+    if(this->name < other.name)
+        return true;
     return false;
 }
 
 bool Isle::operator>(const Isle &other) const
 {
     // TODO: Compare by name
+    if(this->name > other.name)
+        return true;
     return false;
 }
 
@@ -69,6 +83,33 @@ std::vector<Isle *> Isle::readFromFile(const std::string &filename)
     // add them to vector
     // return the vector
     // Input format: isleName
+
+    std::ifstream file(filename);
+
+    if (!file.is_open())
+    {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return isles;
+    }
+
+    std::string line;
+    while (std::getline(file, line))
+    {
+        std::istringstream stream(line);
+        std::string name;
+        int honour;
+
+        if (std::getline(stream, name))
+        {
+            isles.push_back(new Isle(name));
+        }
+        else
+        {
+            std::cerr << "Error: Invalid line format: " << line << std::endl;
+        }
+    }
+
+    file.close();
 
     return isles;
 }
