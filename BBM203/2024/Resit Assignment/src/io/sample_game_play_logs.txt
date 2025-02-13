@@ -1,0 +1,91 @@
+[Item Drop] GOLDIUM dropped on Isle: Couryonne
+[Item Drop] GOLDIUM dropped on Isle: Levannet
+[Item Drop] GOLDIUM dropped on Isle: Steepgulch
+[Item Drop] GOLDIUM dropped on Isle: Tarbella
+[Item Drop] GOLDIUM dropped on Isle: Stoneshire
+[Item Drop] EINSTEINIUM dropped on Isle: Barcergos
+[Item Drop] EINSTEINIUM dropped on Isle: Orisca
+[Item Drop] EINSTEINIUM dropped on Isle: Windvein
+[BFS Drop] AMAZONITE dropped on Isle: Maplegrove
+[Explore Area] Player1 visited Maplegrove
+[Energy] Player1's energy level is 500000
+[Explore Area] Player4 visited Tenea
+[Energy] Player4's energy level is 0
+[Explore Area] Player6 visited Windvein
+[Energy] Player6's energy level is 2000
+[Energy] Player9 does not have enough energy points: 0
+[Explore Area] Player7 visited Tarbella
+[Energy] Player7's energy level is 250
+[Explore Area] Player2 visited Dawnpeak
+[Energy] Player2's energy level is 0
+[Explore Area] Player11 does not have access to collect item from area Argenmomble.
+[Explore Area] Player1 visited Levannet
+[Energy] Player1's energy level is 500250
+[Explore Area] Player10 does not have access to collect item from area Maplegrove.
+[Explore Area] Player2 visited Navalicia
+[Energy] Player2's energy level is 0
+[Explore Area] Player3 visited Orisca
+[Energy] Player3's energy level is 2000
+[Explore Area] Player8 visited Steepgulch
+[Energy] Player8's energy level is 250
+[Energy] Player1 has enough energy points: 500250
+[Craft] Player1 crafted new Isle Ragewharf
+[Explore Area] Player9 visited Dawnpeak
+[Energy] Player9's energy level is 0
+[Explore Area] Player8 visited Tarbella
+[Energy] Player8's energy level is 500
+[Explore Area] Player9 does not have access to collect item from area Argenmomble.
+[Explore Area] Player3 visited Levannet
+[Energy] Player3's energy level is 2250
+[Explore Area] Player4 visited Orisca
+[Energy] Player4's energy level is 2000
+[Explore Area] Player2 visited Windvein
+[Energy] Player2's energy level is 2000
+[Explore Area] Player6 visited Stoneshire
+[Energy] Player6's energy level is 2250
+[Explore Area] Player7 does not have access to collect item from area Coloris.
+[Explore Area] Player8 visited Dawnpeak
+[Energy] Player8's energy level is 500
+[Explore Area] Player11 visited Tenea
+[Energy] Player11's energy level is 0
+[Energy] Player10 does not have enough energy points: 0
+[Explore Area] Player5 visited Orisca
+[Energy] Player5's energy level is 2000
+[Explore Area] Player6 visited Stoneshire
+[Energy] Player6's energy level is 2500
+[Explore Area] Player9 visited Levannet
+[Energy] Player9's energy level is 250
+[Explore Area] Player3 visited Steepgulch
+[Energy] Player3's energy level is 2500
+[Explore Area] Player1 visited Tenea
+[Energy] Player1's energy level is 498250
+[Energy] Player4 has enough energy points: 2000
+[Craft] Player4 crafted new Isle Kinibourg
+[Explore Area] Player10 visited Windvein
+[Energy] Player10's energy level is 2000
+[Energy] Player2 has enough energy points: 2000
+[Craft] Player2 crafted new Isle Pearlwater
+[Explore Area] Player5 visited Dawnpeak
+[Energy] Player5's energy level is 2000
+[Explore Area] Player6 visited Barcergos
+[Energy] Player6's energy level is 4500
+[Explore Area] Player7 visited Maplegrove
+[Energy] Player7's energy level is 500250
+[Explore Area] Player11 visited Coloris
+[Energy] Player11's energy level is 0
+[Energy] Player5 has enough energy points: 2000
+[Craft] Player5 crafted new Isle Angeldrift
+[Energy] Player10 has enough energy points: 2000
+[Craft] Player10 crafted new Isle Ambermond
+[Explore Area] Player11 does not have access to collect item from area Orisca.
+[Explore Area] Player2 visited Barcergos
+[Energy] Player2's energy level is 2000
+[Explore Area] Player3 visited Tarbella
+[Energy] Player3's energy level is 2750
+[Explore Area] Player5 visited Steepgulch
+[Energy] Player5's energy level is 250
+[Explore Area] Player7 visited Ragewharf
+[Energy] Player7's energy level is 500250
+[Explore Area] Player8 does not have access to collect item from area Argenmomble.
+[Explore Area] Player5 visited Stoneshire
+[Energy] Player5's energy level is 500
