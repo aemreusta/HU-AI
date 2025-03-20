@@ -16,7 +16,7 @@ import java.util.Random;
 public class Main {
 
     private static final int[] inputSizes = {500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 250000};
-    private static final String filePath = "/Users/emre/GitHub/HU-AI/BBM204/2024/Assingment 1/src/resources/TrafficFlowDataset.csv";
+    private static final String filePath = "/Users/emre/GitHub/HU-AI/BBM204/2024/Assignment 1/src/resources/TrafficFlowDataset.csv";
 
     public static void main(String[] args) throws IOException {
         ArrayList<int[]> arrays = readArraysFromFile(filePath, inputSizes);
