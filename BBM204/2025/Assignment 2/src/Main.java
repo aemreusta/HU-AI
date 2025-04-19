@@ -1,34 +1,72 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws IOException {
+
+        // File safesFile = new File(args[0]);
+        // File artifactsFile = new File(args[1]);
+
+        // Tests
+        File safesFile = new File("/Users/emre/GitHub/HU-AI/BBM204/2025/Assignment 2/src/io/SafesDiscovered.dat");
+        File artifactsFile = new File("/Users/emre/GitHub/HU-AI/BBM204/2025/Assignment 2/src/io/ArtifactsFound.dat");
 
         /** Safe-lock Opening Algorithm Below **/
 
         System.out.println("##Initiate Operation Safe-lock##");
-        // TODO: Your code goes here
-        // You are expected to read the file given as the first command-line argument to read
-        // safes arriving each minute. Then, use this data to instantiate a
-        // OptimalScrollSolution object. You need to call optimalSafeOpeningAlgorithm() method
-        // of your MaxScrollsDP object to get the solution, and finally print it using
-        // printSolution() method of OptimalScrollSolution object.
+
+        // Reading the safes data from file
+        ArrayList<ArrayList<Integer>> safesDiscovered = new ArrayList<>();
+        try {
+            Scanner scanner = new Scanner(safesFile); // The first argument should be the file for safes
+            int numSafes = Integer.parseInt(scanner.nextLine().trim()); // Read the number of safes
+
+            for (int i = 0; i < numSafes; i++) {
+                String line = scanner.nextLine().trim();
+                String[] parts = line.split(",");
+                ArrayList<Integer> safe = new ArrayList<>();
+                safe.add(Integer.parseInt(parts[0].trim())); // Complexity value
+                safe.add(Integer.parseInt(parts[1].trim())); // Scroll count
+                safesDiscovered.add(safe);
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Safes file not found: " + e.getMessage());
+            return;
+        }
+
+        // Instantiate MaxScrollsDP and solve
+        MaxScrollsDP maxScrollsDP = new MaxScrollsDP(safesDiscovered);
+        OptimalScrollSolution optimalScrollSolution = maxScrollsDP.optimalSafeOpeningAlgorithm();
+        optimalScrollSolution.printSolution(optimalScrollSolution);
+
         System.out.println("##Operation Safe-lock Completed##");
 
         /** Operation Artifact Algorithm Below **/
 
         System.out.println("##Initiate Operation Artifact##");
-        // TODO: Your code goes here
-        // You are expected to read the file given as the second command-line argument to read
-        // each artifact. Then, use this data to instantiate an OptimalShipSolution object.
-        // You need to call optimalArtifactCarryingAlgorithm() method
-        // of your MinShipsGP object to get the solution, and finally print it using
-        // printSolution() method of OptimalShipSolution object.
+
+        // Reading the artifacts data from file
+        ArrayList<Integer> artifactsFound = new ArrayList<>();
+        try {
+            Scanner scanner = new Scanner(artifactsFile); // The second argument should be the file for artifacts
+            while (scanner.hasNextInt()) {
+                artifactsFound.add(scanner.nextInt());
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Artifacts file not found: " + e.getMessage());
+            return;
+        }
+
+        // Instantiate MinShipsGP and solve
+        MinShipsGP minShipsGP = new MinShipsGP(artifactsFound);
+        OptimalShipSolution optimalShipSolution = minShipsGP.optimalArtifactCarryingAlgorithm();
+        optimalShipSolution.printSolution(optimalShipSolution);
+
         System.out.println("##Operation Artifact Completed##");
 
     }
