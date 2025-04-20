@@ -8,30 +8,24 @@ public class MinShipsGP {
         this.artifactsFound = artifactsFound;
     }
 
-    public ArrayList<Integer> getArtifactsFound() {
-        return artifactsFound;
-    }
-
     public OptimalShipSolution optimalArtifactCarryingAlgorithm() {
-        ArrayList<Integer> sortedArtifacts = new ArrayList<>(artifactsFound);
-        Collections.sort(sortedArtifacts, Collections.reverseOrder());
+        ArrayList<Integer> sorted = new ArrayList<>(artifactsFound);
+        Collections.sort(sorted, Collections.reverseOrder());
+        ArrayList<Integer> ships = new ArrayList<>();
 
-        ArrayList<Integer> spaceships = new ArrayList<>();
-
-        for (int weight : sortedArtifacts) {
+        for (int weight : sorted) {
             boolean placed = false;
-            for (int i = 0; i < spaceships.size(); i++) {
-                if (spaceships.get(i) + weight <= 100) {
-                    spaceships.set(i, spaceships.get(i) + weight);
+            for (int i = 0; i < ships.size(); i++) {
+                if (ships.get(i) + weight <= 100) {
+                    ships.set(i, ships.get(i) + weight);
                     placed = true;
                     break;
                 }
             }
             if (!placed) {
-                spaceships.add(weight);
+                ships.add(weight);
             }
         }
-
-        return new OptimalShipSolution(artifactsFound, spaceships.size());
+        return new OptimalShipSolution(artifactsFound, ships.size());
     }
 }
