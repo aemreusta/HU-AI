@@ -12,9 +12,7 @@ public class Genome {
     }
 
     public void addLink(String target, int adaptationFactor) {
-
-        // TODO: Add a new Link to this genome
-
+        this.links.add(new Link(target, adaptationFactor));
     }
 
     public static class Link {

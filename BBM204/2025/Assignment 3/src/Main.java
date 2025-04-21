@@ -2,8 +2,12 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Create an instance of AlienFlora and run readGenomes. After
-        // that run commands for reading and evaluating evolution and
-        // adaptation pairs. File name is given in first argument.
+
+        // File xmlFile = new File(args[0]);
+        File xmlFile = new File("/Users/emre/GitHub/HU-AI/BBM204/2025/Assignment 3/src/AlienFlora.xml");
+        AlienFlora alienFlora = new AlienFlora(xmlFile);
+        alienFlora.readGenomes();
+        alienFlora.evaluateEvolutions();
+        alienFlora.evaluateAdaptations();
     }
 }
