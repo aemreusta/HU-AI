@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class GenomeCluster {
-    public Map<String, Genome> genomeMap = new HashMap<>();
+    public Map<String, Genome> genomeMap = new LinkedHashMap<>(); // Changed to LinkedHashMap
 
     public void addGenome(Genome genome) {
         genomeMap.put(genome.id, genome);

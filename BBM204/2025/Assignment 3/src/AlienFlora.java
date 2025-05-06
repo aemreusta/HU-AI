@@ -198,7 +198,7 @@ public class AlienFlora {
 
             System.out.println("Number of Certified Adaptations: " + certifiedCount);
             System.out.println("Adaptation Factor for Each Adaptation Pair: " + adaptationFactors);
-            System.out.println("##Evaluated Possible Evolutions##");
+            System.out.println("##Evaluated Possible Adaptations##");
 
         } catch (Exception e) {
             e.printStackTrace();
