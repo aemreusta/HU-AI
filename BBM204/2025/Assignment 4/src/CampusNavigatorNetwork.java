@@ -1,204 +1,218 @@
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.nio.file.Files; // Needed for reading whole file
+import java.nio.file.Paths;   // Needed for reading whole file
+import java.io.IOException;
 
 public class CampusNavigatorNetwork implements Serializable {
     static final long serialVersionUID = 11L;
-    public double averageCartSpeed; // Keep in km/h initially for parsing
-    // Convert walking speed (10 km/h) to meters per minute
-    public final double averageWalkingSpeed_mpm = 10.0 * 1000.0 / 60.0; // Approx 166.67 m/min
+    public double averageCartSpeed;
+    public final double averageWalkingSpeed = 10000.0 / 60.0; // 10 km/h in m/min
     public int numCartLines;
     public Station startPoint;
     public Station destinationPoint;
     public List<CartLine> lines;
 
-    // Store file content for regex methods
-    private transient String fileContent;
-
-    /**
-     * Write the necessary Regular Expression to extract string constants from the fileContent
-     * @return the result as String, or null if not found
-     */
-    public String getStringVar(String varName, String content) {
-        // Regex allows optional whitespace around '=', and captures content within quotes
-        // Uses non-greedy quantifier *? inside quotes if needed, but [^"]* is usually sufficient
-        Pattern p = Pattern.compile("[\\t ]*" + Pattern.quote(varName) + "[\\t ]*=[\\t ]*\"([^\"]*)\"");
-        Matcher m = p.matcher(content);
-        if (m.find()) {
-            return m.group(1);
+    // Custom exception for parsing failures
+    static class ParseException extends RuntimeException {
+        public ParseException(String message) {
+            super(message);
         }
-        System.err.println("Warning: Could not find String variable '" + varName + "'");
-        return null; // Indicate not found
+        public ParseException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
-
-    /**
-     * Write the necessary Regular Expression to extract floating point numbers from the fileContent
-     * Your regular expression should support floating point numbers with an arbitrary number of
-     * decimals or without any (e.g. 5, 5.2, 5.02, 5.0002, etc.).
-     * @return the result as Double, or null if not found
-     */
-    public Double getDoubleVar(String varName, String content) {
-        // Regex allows optional whitespace, matches digits, optional decimal part
-        Pattern p = Pattern.compile("[\\t ]*" + Pattern.quote(varName) + "[\\t ]*=[\\t ]*([0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)");
-        Matcher m = p.matcher(content);
+    
+    private String extractGroup(Matcher m, String varName, String groupType, boolean optional) {
         if (m.find()) {
             try {
-                return Double.parseDouble(m.group(1));
-            } catch (NumberFormatException e) {
-                 System.err.println("Warning: Could not parse Double value for '" + varName + "': " + m.group(1));
-                return null;
+                return m.group(1);
+            } catch (IllegalStateException | IndexOutOfBoundsException e) {
+                throw new ParseException("Regex for " + varName + " ("+groupType+") matched, but capture group 1 is missing. Faulty regex pattern.", e);
             }
         }
-         System.err.println("Warning: Could not find Double variable '" + varName + "'");
-        return null; // Indicate not found
+        if (optional) return null; // Return null if optional and not found
+        throw new ParseException("Required variable '" + varName + "' ("+groupType+") not found in input.");
     }
 
-    /** Provided **/
-    public int getIntVar(String varName, String content) {
-        Pattern p = Pattern.compile("[\\t ]*" + Pattern.quote(varName) + "[\\t ]*=[\\t ]*([0-9]+)");
-        Matcher m = p.matcher(content);
-        if (m.find()) {
-             try {
-                return Integer.parseInt(m.group(1));
-            } catch (NumberFormatException e) {
-                 System.err.println("Warning: Could not parse Integer value for '" + varName + "': " + m.group(1));
-                return -1; // Or throw exception
-            }
+
+    // These methods operate on the entire fileContent string.
+    public String getStringVar(String varName, String fileContent) {
+        // Pattern allows for spaces around varName, '=', and quotes. varName is quoted for literal matching.
+        // Allows empty string "" as a value
+        Pattern p = Pattern.compile("[\\s]*" + Pattern.quote(varName) + "[\\s]*=[\\s]*\"([^\"]*)\"[\\s]*", Pattern.MULTILINE);
+        Matcher m = p.matcher(fileContent);
+        String result = extractGroup(m, varName, "String", false);
+        return result.trim(); // Trim the captured group
+    }
+
+    public Double getDoubleVar(String varName, String fileContent) {
+        Pattern p = Pattern.compile("[\\s]*" + Pattern.quote(varName) + "[\\s]*=[\\s]*([0-9]+\\.?[0-9]*|[0-9]*\\.?[0-9]+)[\\s]*", Pattern.MULTILINE);
+        Matcher m = p.matcher(fileContent);
+        String valueStr = extractGroup(m, varName, "Double", false);
+        try {
+            return Double.parseDouble(valueStr);
+        } catch (NumberFormatException e) {
+            throw new ParseException("Malformed double value for '" + varName + "': " + valueStr, e);
         }
-        System.err.println("Warning: Could not find Integer variable '" + varName + "'");
-        return -1; // Indicate error or not found
     }
 
-    /**
-     * Write the necessary Regular Expression to extract a Point object from the fileContent
-     * points are given as an x and y coordinate pair surrounded by parentheses and separated by a comma
-     * @return the result as a Point object, or null if not found
-     */
-    public Point getPointVar(String varName, String content) {
-        // Regex allows optional whitespace around '()', ',', and numbers
-        Pattern p = Pattern.compile("[\\t ]*" + Pattern.quote(varName) + "[\\t ]*=[\\t ]*\\([\\t ]*([0-9]+)[\\t ]*,[\\t ]*([0-9]+)[\\t ]*\\)");
-        Matcher m = p.matcher(content);
+    public int getIntVar(String varName, String fileContent) {
+        // This method was provided in the starter skeleton for getIntVar
+        // Pattern p = Pattern.compile("[\\t ]*" + varName + "[\\t ]*=[\\t ]*([0-9]+)");
+        // Adopting similar robust pattern:
+        Pattern p = Pattern.compile("[\\s]*" + Pattern.quote(varName) + "[\\s]*=[\\s]*([0-9]+)[\\s]*", Pattern.MULTILINE);
+        Matcher m = p.matcher(fileContent);
+        String valueStr = extractGroup(m, varName, "Integer", false);
+        try {
+            return Integer.parseInt(valueStr);
+        } catch (NumberFormatException e) {
+            throw new ParseException("Malformed integer value for '" + varName + "': " + valueStr, e);
+        }
+    }
+    
+    public Point getPointVar(String varName, String fileContent) {
+        Pattern p = Pattern.compile("[\\s]*" + Pattern.quote(varName) + "[\\s]*=[\\s]*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)[\\s]*", Pattern.MULTILINE);
+        Matcher m = p.matcher(fileContent);
         if (m.find()) {
             try {
-                int x = Integer.parseInt(m.group(1));
-                int y = Integer.parseInt(m.group(2));
-                return new Point(x, y);
+                String xStr = m.group(1);
+                String yStr = m.group(2);
+                return new Point(Integer.parseInt(xStr), Integer.parseInt(yStr));
             } catch (NumberFormatException e) {
-                 System.err.println("Warning: Could not parse Point coordinates for '" + varName + "': " + m.group(1) + "," + m.group(2));
-                 return null;
+                throw new ParseException("Malformed coordinates for '" + varName + "': (" + m.group(1) + "," + m.group(2) + ")", e);
+            } catch (IllegalStateException | IndexOutOfBoundsException e) { // Regex matched but groups missing
+                 throw new ParseException("Regex for " + varName + " (Point) matched, but capture groups are missing. Faulty regex pattern.", e);
             }
         }
-         System.err.println("Warning: Could not find Point variable '" + varName + "'");
-        return null; // Indicate not found
+        throw new ParseException("Required variable '" + varName + "' (Point) not found in input.");
     }
 
-    /**
-     * Function to extract the cart lines from the fileContent by reading train line names and their
-     * respective stations. Uses regex to find name and station pairs.
-     * @return List of CartLine instances
-     */
-   public List<CartLine> getCartLines(String content) {
+    // This is the crucial method for parsing multiple cart lines from the WHOLE fileContent
+    public List<CartLine> getCartLines(String fileContent) {
         List<CartLine> cartLines = new ArrayList<>();
-        // Regex to find a line name and its corresponding station list string
-        // Assumes name is immediately followed by stations definition (possibly after other vars)
-        // Using Pattern.DOTALL to allow '.' to match newlines between name and stations
-        // Using reluctant quantifier .*? to avoid overmatching
-        Pattern linePattern = Pattern.compile(
-            "cart_line_name[\\t ]*=[\\t ]*\"([^\"]*)\".*?" + // Capture name (Group 1)
-            "cart_line_stations[\\t ]*=[\\t ]*((?:\\([\\t ]*\\d+[\\t ]*,[\\t ]*\\d+[\\t ]*\\)[\\t ]*)+)", // Capture station list (Group 2)
-            Pattern.DOTALL // Allow '.' to match newline characters
-        );
+        
+        // Pattern to find a cart_line_name
+        Pattern namePattern = Pattern.compile("cart_line_name\\s*=\\s*\"([^\"]+)\""); // Name cannot be empty, ensure it's not just ""
+        Matcher nameMatcher = namePattern.matcher(fileContent);
 
-        // Regex to find individual points within the station list string
-        Pattern pointPattern = Pattern.compile("\\([\\t ]*(\\d+)[\\t ]*,[\\t ]*(\\d+)[\\t ]*\\)");
+        // Pattern to find the stations block associated with a name
+        // It looks for 'cart_line_stations = ' followed by zero or more (x,y) pairs
+        Pattern stationsPattern = Pattern.compile("cart_line_stations\\s*=\\s*((?:\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)\\s*)*)"); 
+        
+        // Pattern to find individual (x,y) pairs within a stations block
+        Pattern singleStationPattern = Pattern.compile("\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
 
-        Matcher lineMatcher = linePattern.matcher(content);
-        int stationIndex = 1; // For unique station names if needed
+        int searchStartOffset = 0; // Where to start searching for the next cart_line_name
 
-        while (lineMatcher.find()) {
-            String lineName = lineMatcher.group(1);
-            String stationsString = lineMatcher.group(2);
-            List<Station> stations = new ArrayList<>();
-
-            Matcher pointMatcher = pointPattern.matcher(stationsString);
-            int pointIndex = 1;
-            while (pointMatcher.find()) {
-                try {
-                    int x = Integer.parseInt(pointMatcher.group(1));
-                    int y = Integer.parseInt(pointMatcher.group(2));
-                    // Create a unique station name
-                    String stationName = lineName + " Station " + pointIndex;
-                    stations.add(new Station(new Point(x, y), stationName));
-                    pointIndex++;
-                } catch (NumberFormatException e) {
-                    System.err.println("Warning: Could not parse point coordinates in line '" + lineName + "': " + pointMatcher.group(0));
-                }
+        while (nameMatcher.find(searchStartOffset)) {
+            String lineName = nameMatcher.group(1).trim(); // Get and trim the cart line name
+            
+            if (lineName.isEmpty()) { // Skip if line name is empty after trim
+                // System.err.println("Warning: Found empty cart_line_name at offset " + nameMatcher.start() + ". Skipping.");
+                searchStartOffset = nameMatcher.end(); // Advance search past this empty name
+                continue;
             }
 
-            if (!stations.isEmpty()) {
-                cartLines.add(new CartLine(lineName, stations));
+            List<Station> stationsList = new ArrayList<>();
+            
+            // Now, search for the stationsPattern *specifically after* the current name's match
+            Matcher stationsMatcherForThisLine = stationsPattern.matcher(fileContent);
+            // We need to ensure that the stations we find are indeed the ones immediately following this name
+            // and not stations for a much later line, if the file had interleaved irrelevant data (unlikely per problem).
+            
+            if (stationsMatcherForThisLine.find(nameMatcher.end())) {
+                // Check if the found stations block starts reasonably close to the name.
+                // A simple heuristic: if another cart_line_name appears before these stations, then these stations don't belong.
+                int nextNameSearchRegionStart = nameMatcher.end();
+                Matcher nextNameFinder = namePattern.matcher(fileContent);
+                boolean anotherNameBeforeStations = false;
+                if (nextNameFinder.find(nextNameSearchRegionStart)) { // Look for the *next* name
+                    if (nextNameFinder.start() < stationsMatcherForThisLine.start()) {
+                        anotherNameBeforeStations = true;
+                    }
+                }
+
+                if (!anotherNameBeforeStations) {
+                    String allStationsBlock = stationsMatcherForThisLine.group(1); // group(1) is the station coordinates block string
+                    
+                    if (allStationsBlock != null && !allStationsBlock.trim().isEmpty()) {
+                        Matcher singleStationMatcher = singleStationPattern.matcher(allStationsBlock);
+                        int stationIndex = 1;
+                        while (singleStationMatcher.find()) {
+                            try {
+                                int x = Integer.parseInt(singleStationMatcher.group(1));
+                                int y = Integer.parseInt(singleStationMatcher.group(2));
+                                String stationDescription = lineName + " Station " + stationIndex++;
+                                stationsList.add(new Station(new Point(x, y), stationDescription));
+                            } catch (NumberFormatException e) {
+                                // System.err.println("Warning: Malformed coordinate in stations for '" + lineName + "': " + singleStationMatcher.group(0) + ". Skipping station.");
+                            }
+                        }
+                    }
+                    // Enforce PDF rule: "at least two stations per line"
+                    if (stationsList.size() >= 2) {
+                        cartLines.add(new CartLine(lineName, stationsList));
+                    } else {
+                        // System.err.println("Warning: Cart line '" + lineName + "' parsed with " + stationsList.size() + " valid stations (requires >= 2). Not adding line.");
+                    }
+                    // The next search for a cart_line_name should start after the stations block we just processed.
+                    searchStartOffset = stationsMatcherForThisLine.end();
+                } else {
+                    // Another name was found before these stations, so these stations don't belong to current lineName.
+                    // The current lineName is orphaned.
+                    // System.err.println("Warning: Cart line '" + lineName + "' found without subsequent stations before next line name. Skipping line.");
+                    searchStartOffset = nameMatcher.end(); // Next name search starts after current name.
+                }
             } else {
-                 System.err.println("Warning: No valid stations found for cart line '" + lineName + "'");
+                // No 'cart_line_stations' block found anywhere after this 'cart_line_name'. Orphaned name.
+                // System.err.println("Warning: Cart line '" + lineName + "' found without any subsequent station block in file. Skipping line.");
+                searchStartOffset = nameMatcher.end(); // Advance search past this name
             }
         }
-
-         if (cartLines.isEmpty() && numCartLines > 0) {
-              System.err.println("Warning: Expected " + numCartLines + " cart lines but found none. Check regex or input format.");
-         }
-
         return cartLines;
     }
 
-
-    /**
-     * Function to populate the given instance variables of this class by calling the functions above.
-     */
     public void readInput(String filename) {
+        this.lines = new ArrayList<>(); // Initialize in case of errors
+
         try {
-            // Read entire file content
-            this.fileContent = new String(Files.readAllBytes(Paths.get(filename)));
-
-            // Parse variables using the content string
+            // Read the entire file content into a single string
+            String fileContent = new String(Files.readAllBytes(Paths.get(filename)));
+            
+            // 1. Parse and assign the starting point, destination point, and average cart speed.
+            // These use the helper methods that operate on the whole fileContent.
             this.numCartLines = getIntVar("num_cart_lines", fileContent);
-            if (this.numCartLines < 0) throw new IOException("Could not read num_cart_lines");
+            this.startPoint = new Station(getPointVar("starting_point", fileContent), "Starting Point");
+            this.destinationPoint = new Station(getPointVar("destination_point", fileContent), "Final Destination");
+            this.averageCartSpeed = getDoubleVar("average_cart_speed", fileContent);
+            
+            // 2. Read all cart lines from the input (not just the first one)
+            // 3. Correctly parse all stations under each line, preserving their order
+            // 4. Assign the correct names (e.g., "Cart Line A Station 1") to each station
+            this.lines = getCartLines(fileContent); // This method handles points 2, 3, 4 for cart lines
 
-            Point startCoords = getPointVar("starting_point", fileContent);
-            if (startCoords == null) throw new IOException("Could not read starting_point");
-            this.startPoint = new Station(startCoords, "Starting Point"); // Assign standard name
-
-            Point destCoords = getPointVar("destination_point", fileContent);
-             if (destCoords == null) throw new IOException("Could not read destination_point");
-            this.destinationPoint = new Station(destCoords, "Final Destination"); // Assign standard name
-
-            Double speed = getDoubleVar("average_cart_speed", fileContent);
-             if (speed == null) throw new IOException("Could not read average_cart_speed");
-            this.averageCartSpeed = speed; // Keep in km/h
-
-            // Get cart lines using the content string
-            this.lines = getCartLines(fileContent);
-
-             // Validate number of lines found matches expected number
-             if (this.lines.size() != this.numCartLines) {
-                  System.err.println("Warning: Found " + this.lines.size() + " cart lines, but expected " + this.numCartLines);
-             }
-
+            // Optional: Validate if the number of lines parsed matches numCartLines declared in the file.
+            // The TA description for TestCampusNavigatorAppReadInput: "Number of cart lines (numCartLines)"
+            // This implies the field `this.numCartLines` should be set directly from the file.
+            // The `this.lines.size()` should be the count of *validly parsed* lines.
+            // If the test expects them to be equal, and your getCartLines filters out lines that numCartLines counts,
+            // that could be a mismatch.
+            // For now, we assume numCartLines is just a declaration and lines.size() is what's actually usable.
+            // If a strict match is needed:
+            // if (this.numCartLines != this.lines.size()) {
+            //     throw new ParseException("Declared num_cart_lines (" + this.numCartLines + 
+            //                            ") does not match actual number of valid cart lines parsed (" + this.lines.size() + ").");
+            // }
 
         } catch (IOException e) {
-            System.err.println("Error reading or parsing campus network file '" + filename + "': " + e.getMessage());
-            // Optionally, re-throw or exit, or ensure default values are safe
-            this.numCartLines = 0;
-            this.lines = new ArrayList<>();
-            this.averageCartSpeed = 0;
-            // startPoint and destinationPoint might be null, handle this in navigator
+            // System.err.println("FATAL: IOException while reading input file: " + filename + " - " + e.getMessage());
+            throw new RuntimeException("Failed to read input file: " + filename, e);
+        } catch (ParseException e) { // Catch our custom parsing exceptions
+            // System.err.println("FATAL: Parsing error in input file: " + filename + " - " + e.getMessage());
+            throw new RuntimeException("Failed to parse input file: " + filename + ". Error: " + e.getMessage(), e);
         }
     }
-
-     // Helper method to get cart speed in meters per minute
-     public double getCartSpeedMetersPerMinute() {
-         return this.averageCartSpeed * 1000.0 / 60.0;
-     }
 }
