@@ -444,7 +444,9 @@ def test_model(model, test_loader, criterion, classes):
     all_predictions = []
     all_labels = []
 
-    with torch.no_grad():  # Turn off gradients for validation, saves memory and computations
+    with (
+        torch.no_grad()
+    ):  # Turn off gradients for validation, saves memory and computations
         for images, labels in test_loader:
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
